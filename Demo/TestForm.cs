@@ -4,6 +4,7 @@ using System;
 using ScintillaNET;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Drawing;
 
 #endregion Using Directives
 
@@ -11,6 +12,8 @@ namespace Demo
 {
     public partial class TestForm : Form
     {
+        public Diagnostics diagnostics = new Diagnostics();
+
         public TestForm()
         {
             InitializeComponent();
@@ -24,6 +27,8 @@ namespace Demo
 
             // Настройка транслятора
             Translator translator = new Translator();
+
+           
 
         }
 
@@ -54,9 +59,45 @@ namespace Demo
             string code = activeEditor.Text;
             SimpleLexer lexer = new SimpleLexer(code);
             List<Token> tokens = lexer.Tokenize();
-            tbxAnalysis.Text += tokens.Count;
             Parser parser = new Parser(tokens);
             parser.Parse();
+
+            rtbxAnalysis.Clear();
+            for (int i = 0; i < tokens.Count; i++)
+            {
+                rtbxAnalysis.AppendText(tokens[i].Lexeme + "\r\n");
+            }
+
+            rtbxOutput.Clear();
+            for (int i = 0; i < Diagnostics._messagesError.Count; i++)
+            {
+            rtbxOutput.SelectionColor = Color.DarkRed;
+                rtbxOutput.AppendText(Diagnostics._messagesError[i] + "\r\n");
+            }
+
+            for (int i = 0; i < Diagnostics._messagesWarning.Count; i++)
+            {
+            rtbxOutput.SelectionColor = Color.DarkGoldenrod;
+                rtbxOutput.AppendText(Diagnostics._messagesWarning[i] + "\r\n");
+            }
+        }
+
+        private void TestForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            
+        }
+
+        private void scintilla1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F2)
+            {
+                toolStripButton1_Click(sender, e);
+            }
+        }
+
+        private void rtbxOutput_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

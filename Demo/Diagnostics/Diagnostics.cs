@@ -4,23 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Demo.Diagnostics
+namespace Demo
 {
     public class Diagnostics
     {
-        private readonly List<string> _messages = new List<string>();
+        public static List<string> _messagesError = new List<string>();
+        public static List<string> _messagesWarning = new List<string>();
 
-        public void Report(int position, string message)
+        public static void Report(int line, int column, string message)
         {
-            _messages.Add(string.Format("[Error at {0}]: {1}", position, message));
+            _messagesError.Add(string.Format("[Ошибка на {0} строке, {1} колонке]: {2}", line, column, message));
         }
 
-        public void PrintAll()
+        public static void Warning(int line, int column, string message)
         {
-            foreach (string msg in _messages)
-            {
-                Console.WriteLine(msg);
-            }
+            _messagesWarning.Add(string.Format("[Предупреждение на {0} строке, {1} колонке]: {2}", line, column, message));
         }
+
     }
 }

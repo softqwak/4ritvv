@@ -10,10 +10,15 @@ namespace Demo
     {
         private readonly string _source;
         private int _position;
+        private int _line;
+        private int _column;
 
         public SimpleLexer(string source)
         {
             _source = source;
+            _position = 0;
+            _line = 1;
+            _column = 1;
         }
 
         public List<Token> Tokenize()
@@ -30,55 +35,116 @@ namespace Demo
 
         private Token NextToken()
         {
+            // Пропуск пробелов и символов новой строки
             while (_position < _source.Length && char.IsWhiteSpace(_source[_position]))
+            {
+                if (_source[_position] == '\n' || _source[_position] == '\r')
+                {
+                    if (_source[_position] == '\r' && _position + 1 < _source.Length && _source[_position + 1] == '\n')
+                    {
+                        _position++; // Пропустить '\n' после '\r'
+                    }
+
+                    _line++;
+                    _column = 1;
+                }
+                else
+                {
+                    _column++;
+                }
+
                 _position++;
+            }
 
             if (_position >= _source.Length)
-                return new Token(TokenKind.EndOfFile, string.Empty, _position);
+                return new Token(TokenKind.EndOfFile, string.Empty, _position, _line, _column);
 
             char ch = _source[_position];
 
             if (char.IsLetter(ch))
             {
                 int start = _position;
+                int startLine = _line;
+                int startColumn = _column;
+
                 while (_position < _source.Length && char.IsLetterOrDigit(_source[_position]))
+                {
                     _position++;
+                    _column++;
+                }
 
                 string word = _source.Substring(start, _position - start);
-                return new Token(KeywordToKind(word), word, start);
+                return new Token(KeywordToKind(word), word, start, startLine, startColumn);
             }
 
             if (char.IsDigit(ch))
             {
                 int start = _position;
+                int startLine = _line;
+                int startColumn = _column;
+
                 while (_position < _source.Length && char.IsDigit(_source[_position]))
+                {
                     _position++;
+                    _column++;
+                }
 
                 string number = _source.Substring(start, _position - start);
-                return new Token(TokenKind.Int, number, start);
+                return new Token(TokenKind.Int, number, start, startLine, startColumn);
+            }
+
+            // Обработка строк
+            if (ch == '"')
+            {
+                int start = _position;
+                int startLine = _line;
+                int startColumn = _column;
+
+                _position++; // пропустить открывающую кавычку
+                _column++;
+
+                var builder = new StringBuilder();
+                while (_position < _source.Length && _source[_position] != '"')
+                {
+                    builder.Append(_source[_position]);
+                    _position++;
+                    _column++;
+                }
+
+                if (_position < _source.Length && _source[_position] == '"')
+                {
+                    _position++; // пропустить закрывающую кавычку
+                    _column++;
+                    string content = builder.ToString();
+                    return new Token(TokenKind.StringText, content, start, startLine, startColumn);
+                }
+                else
+                {
+                    // незавершённая строка
+                    return new Token(TokenKind.Invalid, _source.Substring(start, _position - start), start, startLine, startColumn);
+                }
             }
 
             int tokenPos = _position++;
-            switch (ch)
+            char tokenChar = _source[tokenPos];
+            switch (tokenChar)
             {
-                case '=': return new Token(TokenKind.Assignment, "=", tokenPos);
-                case ':': return new Token(TokenKind.Colon, ":", tokenPos);
-                case '"': return new Token(TokenKind.DoubleQuotes, "\"", tokenPos);
-
-                case '{': return new Token(TokenKind.OpenBrace, "{", tokenPos);
-                case '}': return new Token(TokenKind.CloseBrace, "}", tokenPos);
-
-                case '+': return new Token(TokenKind.Plus, "+", tokenPos);
-                case '-': return new Token(TokenKind.Minus, "-", tokenPos);
-                case '*': return new Token(TokenKind.Asterisk, "*", tokenPos);
-                case '/': return new Token(TokenKind.Slash, "/", tokenPos);
-                case '(': return new Token(TokenKind.OpenParen, "(", tokenPos);
-                case ')': return new Token(TokenKind.CloseParen, ")", tokenPos);
-                
-                case ';': return new Token(TokenKind.Semicolon, ";", tokenPos);
+                case '=': return new Token(TokenKind.Assignment, "=", tokenPos, _line, _column);
+                case ':': return new Token(TokenKind.Colon, ":", tokenPos, _line, _column);
+                case '{': return new Token(TokenKind.OpenBrace, "{", tokenPos, _line, _column);
+                case '}': return new Token(TokenKind.CloseBrace, "}", tokenPos, _line, _column);
+                case '+': return new Token(TokenKind.Plus, "+", tokenPos, _line, _column);
+                case '-': return new Token(TokenKind.Minus, "-", tokenPos, _line, _column);
+                case '*': return new Token(TokenKind.Asterisk, "*", tokenPos, _line, _column);
+                case '/': return new Token(TokenKind.Slash, "/", tokenPos, _line, _column);
+                case '(': return new Token(TokenKind.OpenParen, "(", tokenPos, _line, _column);
+                case ')': return new Token(TokenKind.CloseParen, ")", tokenPos, _line, _column);
+                case ';': return new Token(TokenKind.Semicolon, ";", tokenPos, _line, _column);
+                case ',': return new Token(TokenKind.Comma, ",", tokenPos, _line, _column);
+                case '!': return new Token(TokenKind.ExclamationMark, "!", tokenPos, _line, _column);
             }
 
-            return new Token(TokenKind.Invalid, ch.ToString(), tokenPos);
+            return new Token(TokenKind.Invalid, tokenChar.ToString(), tokenPos, _line, _column);
         }
 
         private static TokenKind KeywordToKind(string word)
@@ -88,6 +154,8 @@ namespace Demo
                 case "int": return TokenKind.Int;
                 case "string": return TokenKind.String;
                 case "float": return TokenKind.Float;
+
+                case "==": return TokenKind.Equal;
 
                 case "//": return TokenKind.DoubleSlash;
 
@@ -104,7 +172,7 @@ namespace Demo
                 case "impl": return TokenKind.Impl;
                 case "let": return TokenKind.Let;
                 case "del": return TokenKind.Del;
-                case "print": return TokenKind.Print;                
+                case "print": return TokenKind.Print;
 
                 default: return TokenKind.Identifier;
             }

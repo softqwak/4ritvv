@@ -8,7 +8,7 @@ namespace Demo
 {
 
     public enum TokenKind
-    {
+    { 
         // Типы данных
         Int,
         String,
@@ -20,13 +20,17 @@ namespace Demo
         // Оператор присвоения
         Assignment, // =
 
+        // Оператор сравнения
+        Equal,  // ==
+
         // Оператор объявления типа
         Colon,  // :
 
         // Комментарии
-        DoubleSlash, //
+        DoubleSlash,
 
         // Строки
+        StringText,
         DoubleQuotes,  // "
 
         // Операторы арифметики
@@ -36,9 +40,11 @@ namespace Demo
         Slash,      // /
 
         // Скобки и разделители
-        OpenParen,      // (
-        CloseParen,     // )
-        Semicolon,      // ;
+        OpenParen,          // (
+        CloseParen,         // )
+        Semicolon,          // ;
+        Comma,              // ,
+        ExclamationMark,    // !
 
         // Блок кода
         OpenBrace,      // {
@@ -71,14 +77,23 @@ namespace Demo
     public class Token
     {
         public TokenKind Kind { get; }
+
         public string Lexeme { get; }
+
         public int Position { get; }
 
-        public Token(TokenKind kind, string lexeme, int pos)
+        public int Line { get; }
+
+        public int Column { get; }
+
+
+        public Token(TokenKind kind, string lexeme, int pos, int line, int column)
         {
             Kind = kind;
             Lexeme = lexeme;
             Position = pos;
+            Line = line;
+            Column = column;
         }
     }
 

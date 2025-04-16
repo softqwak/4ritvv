@@ -21,6 +21,7 @@ namespace Demo
             scintilla.Styles[1].ForeColor = Color.Green;  // Комментарии
             scintilla.Styles[1].Italic = true;
             scintilla.Styles[2].ForeColor = Color.Blue;   // Ключевые слова
+            scintilla.Styles[3].ForeColor = Color.ForestGreen;
 
             // Подсветка текущей строки
             scintilla.CaretLineVisible = true;
@@ -81,18 +82,6 @@ namespace Demo
             editor.StartStyling(0);
             editor.SetStyling(text.Length, Style.Default);
 
-            // Подсветка комментариев
-            for (int i = 0; i < editor.Lines.Count; i++)
-            {
-                var line = editor.Lines[i];
-                string lineText = line.Text.Trim();
-                if (lineText.StartsWith("'") || lineText.StartsWith("REM", StringComparison.OrdinalIgnoreCase))
-                {
-                    editor.StartStyling(line.Position);
-                    editor.SetStyling(line.Length, 1);
-                }
-            }
-
             // Подсветка ключевых слов
             foreach (string keyword in simple.keywords)
             {
@@ -103,6 +92,32 @@ namespace Demo
                     editor.SetStyling(match.Length, 2);
                 }
             }
+
+            // Подсветка строк
+            foreach (Match match in Regex.Matches(text, "\"(?:\\\\.|[^\"\\\\])*\""))
+            {
+                editor.StartStyling(match.Index);
+                editor.SetStyling(match.Length, 3);
+            }
+
+            // Подсветка комментариев
+            for (int i = 0; i < editor.Lines.Count; i++)
+            {
+                var line = editor.Lines[i];
+                string fullText = line.Text;
+
+                int commentIndex = fullText.IndexOf("//");
+
+                if (commentIndex >= 0)
+                {
+                    int commentStart = line.Position + commentIndex;
+                    int commentLength = fullText.Length - commentIndex;
+
+                    editor.StartStyling(commentStart);
+                    editor.SetStyling(commentLength, 1); // Стиль 1 — комментарий
+                }
+            }
         }
+
     }
 }
