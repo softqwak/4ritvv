@@ -31,17 +31,17 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestForm));
             this.scintilla1 = new ScintillaNET.Scintilla();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.pageEx1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabExs = new System.Windows.Forms.TabControl();
+            this.tabEx1 = new System.Windows.Forms.TabPage();
+            this.tabEx2 = new System.Windows.Forms.TabPage();
             this.scintilla2 = new ScintillaNET.Scintilla();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.tabConsol = new System.Windows.Forms.TabControl();
+            this.tabAnalysis = new System.Windows.Forms.TabPage();
+            this.tbxAnalysis = new System.Windows.Forms.TextBox();
+            this.tabErrors = new System.Windows.Forms.TabPage();
+            this.tbxErrors = new System.Windows.Forms.TextBox();
+            this.tabWarnings = new System.Windows.Forms.TabPage();
+            this.tbxWarnings = new System.Windows.Forms.TextBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
@@ -49,13 +49,13 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.pageEx1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.tabPage4.SuspendLayout();
-            this.tabPage5.SuspendLayout();
+            this.tabExs.SuspendLayout();
+            this.tabEx1.SuspendLayout();
+            this.tabEx2.SuspendLayout();
+            this.tabConsol.SuspendLayout();
+            this.tabAnalysis.SuspendLayout();
+            this.tabErrors.SuspendLayout();
+            this.tabWarnings.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -82,47 +82,47 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.pageEx1);
+            this.splitContainer1.Panel1.Controls.Add(this.tabExs);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
+            this.splitContainer1.Panel2.Controls.Add(this.tabConsol);
             this.splitContainer1.Size = new System.Drawing.Size(859, 528);
             this.splitContainer1.SplitterDistance = 281;
             this.splitContainer1.TabIndex = 4;
             // 
-            // pageEx1
+            // tabExs
             // 
-            this.pageEx1.Controls.Add(this.tabPage1);
-            this.pageEx1.Controls.Add(this.tabPage2);
-            this.pageEx1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pageEx1.Location = new System.Drawing.Point(0, 0);
-            this.pageEx1.Name = "pageEx1";
-            this.pageEx1.SelectedIndex = 0;
-            this.pageEx1.Size = new System.Drawing.Size(857, 279);
-            this.pageEx1.TabIndex = 5;
+            this.tabExs.Controls.Add(this.tabEx1);
+            this.tabExs.Controls.Add(this.tabEx2);
+            this.tabExs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabExs.Location = new System.Drawing.Point(0, 0);
+            this.tabExs.Name = "tabExs";
+            this.tabExs.SelectedIndex = 0;
+            this.tabExs.Size = new System.Drawing.Size(857, 279);
+            this.tabExs.TabIndex = 5;
             // 
-            // tabPage1
+            // tabEx1
             // 
-            this.tabPage1.Controls.Add(this.scintilla1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(849, 253);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Пример №1";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabEx1.Controls.Add(this.scintilla1);
+            this.tabEx1.Location = new System.Drawing.Point(4, 22);
+            this.tabEx1.Name = "tabEx1";
+            this.tabEx1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabEx1.Size = new System.Drawing.Size(849, 253);
+            this.tabEx1.TabIndex = 0;
+            this.tabEx1.Text = "Пример №1";
+            this.tabEx1.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // tabEx2
             // 
-            this.tabPage2.Controls.Add(this.scintilla2);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(824, 244);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Пример №2";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabEx2.Controls.Add(this.scintilla2);
+            this.tabEx2.Location = new System.Drawing.Point(4, 22);
+            this.tabEx2.Name = "tabEx2";
+            this.tabEx2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabEx2.Size = new System.Drawing.Size(849, 253);
+            this.tabEx2.TabIndex = 1;
+            this.tabEx2.Text = "Пример №2";
+            this.tabEx2.UseVisualStyleBackColor = true;
             // 
             // scintilla2
             // 
@@ -130,98 +130,102 @@
             this.scintilla2.Location = new System.Drawing.Point(3, 3);
             this.scintilla2.Name = "scintilla2";
             this.scintilla2.ScrollWidth = 5001;
-            this.scintilla2.Size = new System.Drawing.Size(818, 238);
+            this.scintilla2.Size = new System.Drawing.Size(843, 247);
             this.scintilla2.TabIndex = 1;
+            this.scintilla2.Text = "print(\"Hello, world!\");";
             this.scintilla2.WrapMode = ScintillaNET.WrapMode.Word;
             // 
-            // tabControl1
+            // tabConsol
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tabConsol.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Controls.Add(this.tabPage4);
-            this.tabControl1.Controls.Add(this.tabPage5);
-            this.tabControl1.Location = new System.Drawing.Point(0, 3);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(850, 235);
-            this.tabControl1.TabIndex = 0;
+            this.tabConsol.Controls.Add(this.tabAnalysis);
+            this.tabConsol.Controls.Add(this.tabErrors);
+            this.tabConsol.Controls.Add(this.tabWarnings);
+            this.tabConsol.Location = new System.Drawing.Point(0, 3);
+            this.tabConsol.Name = "tabConsol";
+            this.tabConsol.SelectedIndex = 0;
+            this.tabConsol.Size = new System.Drawing.Size(850, 235);
+            this.tabConsol.TabIndex = 0;
             // 
-            // tabPage3
+            // tabAnalysis
             // 
-            this.tabPage3.Controls.Add(this.textBox1);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(817, 201);
-            this.tabPage3.TabIndex = 0;
-            this.tabPage3.Text = "Анализ";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.tabAnalysis.Controls.Add(this.tbxAnalysis);
+            this.tabAnalysis.Location = new System.Drawing.Point(4, 22);
+            this.tabAnalysis.Name = "tabAnalysis";
+            this.tabAnalysis.Padding = new System.Windows.Forms.Padding(3);
+            this.tabAnalysis.Size = new System.Drawing.Size(842, 209);
+            this.tabAnalysis.TabIndex = 0;
+            this.tabAnalysis.Text = "Анализ";
+            this.tabAnalysis.UseVisualStyleBackColor = true;
             // 
-            // tabPage4
+            // tbxAnalysis
             // 
-            this.tabPage4.Controls.Add(this.textBox2);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(817, 201);
-            this.tabPage4.TabIndex = 1;
-            this.tabPage4.Text = "Ошибки";
-            this.tabPage4.UseVisualStyleBackColor = true;
-            // 
-            // textBox1
-            // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tbxAnalysis.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(3, 6);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(808, 189);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Text = "Здесь будет массив лексем";
+            this.tbxAnalysis.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbxAnalysis.Location = new System.Drawing.Point(3, 6);
+            this.tbxAnalysis.Multiline = true;
+            this.tbxAnalysis.Name = "tbxAnalysis";
+            this.tbxAnalysis.ReadOnly = true;
+            this.tbxAnalysis.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbxAnalysis.Size = new System.Drawing.Size(833, 197);
+            this.tbxAnalysis.TabIndex = 0;
+            this.tbxAnalysis.Text = "Здесь будет массив лексем";
             // 
-            // textBox2
+            // tabErrors
             // 
-            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tabErrors.Controls.Add(this.tbxErrors);
+            this.tabErrors.Location = new System.Drawing.Point(4, 22);
+            this.tabErrors.Name = "tabErrors";
+            this.tabErrors.Padding = new System.Windows.Forms.Padding(3);
+            this.tabErrors.Size = new System.Drawing.Size(842, 209);
+            this.tabErrors.TabIndex = 1;
+            this.tabErrors.Text = "Ошибки";
+            this.tabErrors.UseVisualStyleBackColor = true;
+            // 
+            // tbxErrors
+            // 
+            this.tbxErrors.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox2.Location = new System.Drawing.Point(4, 6);
-            this.textBox2.Multiline = true;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox2.Size = new System.Drawing.Size(808, 189);
-            this.textBox2.TabIndex = 1;
-            this.textBox2.Text = "Здесь будут ошибки";
+            this.tbxErrors.Font = new System.Drawing.Font("Consolas", 9.75F);
+            this.tbxErrors.Location = new System.Drawing.Point(4, 6);
+            this.tbxErrors.Multiline = true;
+            this.tbxErrors.Name = "tbxErrors";
+            this.tbxErrors.ReadOnly = true;
+            this.tbxErrors.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbxErrors.Size = new System.Drawing.Size(832, 197);
+            this.tbxErrors.TabIndex = 1;
+            this.tbxErrors.Text = "Здесь будут ошибки";
             // 
-            // tabPage5
+            // tabWarnings
             // 
-            this.tabPage5.Controls.Add(this.textBox3);
-            this.tabPage5.Location = new System.Drawing.Point(4, 22);
-            this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(842, 209);
-            this.tabPage5.TabIndex = 2;
-            this.tabPage5.Text = "Предупреждения";
-            this.tabPage5.UseVisualStyleBackColor = true;
+            this.tabWarnings.Controls.Add(this.tbxWarnings);
+            this.tabWarnings.Location = new System.Drawing.Point(4, 22);
+            this.tabWarnings.Name = "tabWarnings";
+            this.tabWarnings.Padding = new System.Windows.Forms.Padding(3);
+            this.tabWarnings.Size = new System.Drawing.Size(842, 209);
+            this.tabWarnings.TabIndex = 2;
+            this.tabWarnings.Text = "Предупреждения";
+            this.tabWarnings.UseVisualStyleBackColor = true;
             // 
-            // textBox3
+            // tbxWarnings
             // 
-            this.textBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tbxWarnings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox3.Location = new System.Drawing.Point(4, 6);
-            this.textBox3.Multiline = true;
-            this.textBox3.Name = "textBox3";
-            this.textBox3.ReadOnly = true;
-            this.textBox3.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox3.Size = new System.Drawing.Size(833, 197);
-            this.textBox3.TabIndex = 2;
-            this.textBox3.Text = "Здесь будут предупреждения";
+            this.tbxWarnings.Font = new System.Drawing.Font("Consolas", 9.75F);
+            this.tbxWarnings.Location = new System.Drawing.Point(4, 6);
+            this.tbxWarnings.Multiline = true;
+            this.tbxWarnings.Name = "tbxWarnings";
+            this.tbxWarnings.ReadOnly = true;
+            this.tbxWarnings.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbxWarnings.Size = new System.Drawing.Size(833, 197);
+            this.tbxWarnings.TabIndex = 2;
+            this.tbxWarnings.Text = "Здесь будут предупреждения";
             // 
             // toolStrip1
             // 
@@ -242,6 +246,7 @@
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripButton2
             // 
@@ -268,16 +273,16 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.pageEx1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
-            this.tabPage4.ResumeLayout(false);
-            this.tabPage4.PerformLayout();
-            this.tabPage5.ResumeLayout(false);
-            this.tabPage5.PerformLayout();
+            this.tabExs.ResumeLayout(false);
+            this.tabEx1.ResumeLayout(false);
+            this.tabEx2.ResumeLayout(false);
+            this.tabConsol.ResumeLayout(false);
+            this.tabAnalysis.ResumeLayout(false);
+            this.tabAnalysis.PerformLayout();
+            this.tabErrors.ResumeLayout(false);
+            this.tabErrors.PerformLayout();
+            this.tabWarnings.ResumeLayout(false);
+            this.tabWarnings.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -289,17 +294,17 @@
 
 		private ScintillaNET.Scintilla scintilla1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TabControl pageEx1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabControl tabExs;
+        private System.Windows.Forms.TabPage tabEx1;
+        private System.Windows.Forms.TabPage tabEx2;
         private ScintillaNET.Scintilla scintilla2;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TabPage tabPage5;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TabControl tabConsol;
+        private System.Windows.Forms.TabPage tabAnalysis;
+        private System.Windows.Forms.TabPage tabErrors;
+        private System.Windows.Forms.TextBox tbxAnalysis;
+        private System.Windows.Forms.TextBox tbxErrors;
+        private System.Windows.Forms.TabPage tabWarnings;
+        private System.Windows.Forms.TextBox tbxWarnings;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
