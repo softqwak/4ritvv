@@ -90,7 +90,7 @@ namespace Demo
                 }
 
                 string number = _source.Substring(start, _position - start);
-                return new Token(TokenKind.Int, number, start, startLine, startColumn);
+                return new Token(TokenKind.NumberInt, number, start, startLine, startColumn);
             }
 
             // Обработка строк

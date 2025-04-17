@@ -24,12 +24,36 @@ namespace Demo
             _line = 0;
             _column = 0;
         }
+
+
+        public void Parse()
+        {
+            Diagnostics._messagesError.Clear();
+            Diagnostics._messagesWarning.Clear();
+            ParseProgram();
+        }
+
+        private void ParseProgram()
+        {
+            while (!Match(TokenKind.EndOfFile))
+            {
+                ParseTopLevel();
+            }
+        }
+
+        private void ParseTopLevel()
+        {
+            // В будущем здесь будет обработка функций, классов, и т.д.
+            // Пока обрабатываем только операторы верхнего уровня
+            ParseStatement();
+        }
+
+
+
         public bool Expect(TokenKind kind)
         {
             if (!Match(kind))
-            {
                 return false;
-            }
             else
             {
                 Advance();
@@ -46,6 +70,7 @@ namespace Demo
                 Advance(); // иначе — просто пропускаем токены, пока не дойдём до нужного
             }
         }
+
         private Token Peek(int n = 0)
         {
             if (_position >= _tokens.Count || _position + n >= _tokens.Count)
@@ -55,6 +80,10 @@ namespace Demo
 
         private void Advance()
         {
+            if (_position < _tokens.Count)
+            {
+                lexems.Add($"Процессинг токена: {Peek().Lexeme} ({Peek().Kind})");
+            }
             _position++;
         }
 
@@ -63,197 +92,229 @@ namespace Demo
             return Peek().Kind == kind;
         }
 
-        public void Parse()
-        {
-            Diagnostics._messagesWarning.Clear();
-            Diagnostics._messagesError.Clear();
-
-            while (!Match(TokenKind.EndOfFile))
-            {
-                Token token = Peek();
-                try
-                {
-                    lexems.Add($"Token: {token.Kind} -> '{token.Lexeme}'");
-
-                    if (Match(TokenKind.Print)) // Сначала проверяем print
-                    {
-                        ParsePrintStatement();
-                        continue; // переходим к следующей конструкции
-                    }
-                    else if (Match(TokenKind.Let) || Match(TokenKind.Identifier)) // Проверяем переменную после print
-                    {
-                        ParseVariableDeclarationOrAssignment();
-                        continue;
-                    }
-                    else
-                    {
-                        // Неизвестная конструкция
-                        Diagnostics.Report(token.Line, token.Column, $"Неизвестная конструкция: '{token.Lexeme}'");
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    Diagnostics.Report(token.Line, token.Column, "Неожиданная ошибка при разборе: " + ex.Message);
-                }
-
-                Advance(); // по умолчанию двигаемся дальше
-            }
-        }
-
-        private bool ParseExpression()
+        private void ParseExpression()
         {
             var token = Peek();
+            if (token.Kind == TokenKind.EndOfFile) return; // Выход, если достигнут конец файла
 
-            // Обработка одного выражения
-
-            if (Match(TokenKind.Identifier) || Match(TokenKind.Int) || Match(TokenKind.Float) || Match(TokenKind.StringText))
+            // Если токен неожидан, синхронизируем
+            if (token.Kind == TokenKind.Invalid)
             {
-                Advance();
-                return true;
+                Diagnostics.Report(token.Line, token.Column, "Неверный токен");
+                SynchronizeTo(TokenKind.Semicolon, TokenKind.OpenBrace);  // синхронизируем до ожидаемых символов
+                return;
             }
 
-            // Обработка ошибки, если выражение невалидно
-            Diagnostics.Report(token.Line, token.Column, $"Ожидался идентификатор, число или строка, но получен {token.Kind}");
-            Advance();
-            return false;
+            switch (token.Kind)
+            {
+                case TokenKind.NumberInt:
+                case TokenKind.NumberFloat:
+                case TokenKind.StringText:
+                case TokenKind.Identifier:
+                    Advance();
+                    break;
+
+                default:
+                    Diagnostics.Report(token.Line, token.Column, "Ожидалось выражение");
+                    SynchronizeTo(TokenKind.Semicolon, TokenKind.CloseBrace);
+                    break;
+            }
         }
 
-        private void ParsePrintStatement()
+        public void ParseStatement()
         {
-            Advance(); // пропустить 'print'
-
-            if (!Expect(TokenKind.OpenParen))
-                return;
-
-            // пустой вызов допустим: print();
-            if (Match(TokenKind.CloseParen))
+            var token = Peek().Kind;
+            var tokenNext = Peek(1).Kind;
+            if (Match(TokenKind.Let))
             {
-                Advance();
+                ParseVariableDeclaration();
+            }
+            else if (token == TokenKind.Identifier && tokenNext == TokenKind.Colon)
+            {
+                // Объявление без 'let' (например, при глобальном определении)
+                ParseVariableDeclaration();
+            }
+            else if (tokenNext == TokenKind.Assignment)
+            {
+                ParseAssignment();
+            }
+            else if (token == TokenKind.Print)
+            {
+                ParsePrint();
             }
             else
             {
-                // как минимум один аргумент
-                if (!ParseExpression())
-                {
-                    Diagnostics.Report(Peek().Line, Peek().Column, "Ожидалось выражение внутри print(...)");
-                    // пробуем восстановиться
-                    SynchronizeTo(TokenKind.CloseParen, TokenKind.Semicolon);
-                }
-                else
-                {
-                    // поддержка нескольких аргументов через запятую
-                    while (Match(TokenKind.Comma))
-                    {
-                        Advance(); // пропустить запятую
+                Diagnostics.Report(Peek().Line, Peek().Column, "Ожидался оператор или выражение");
+                SynchronizeTo(TokenKind.Semicolon, TokenKind.CloseBrace, TokenKind.Identifier);
+                Advance();
+            }
+        }
 
-                        if (!ParseExpression())
+        private void ParseVariableDeclaration()
+        {
+            Expect(TokenKind.Let); // обязательно съедаем 'let' при наличии
+
+            var token = Peek();
+
+            if (token.Kind == TokenKind.Invalid)
+            {
+                Diagnostics.Report(token.Line, token.Column, "Некорректная переменная");
+                SynchronizeTo(TokenKind.Semicolon);
+                return;
+            }
+
+            if (!Expect(TokenKind.Identifier))
+            {
+                Diagnostics.Report(token.Line, token.Column, "Ожидался идентификатор переменной");
+                SynchronizeTo(TokenKind.Semicolon);
+                return;
+            }
+
+            // Проверка на тип (необязательный)
+            if (Match(TokenKind.Colon))
+            {
+                Advance(); // съедаем ':'
+
+                if (!(Expect(TokenKind.Int) || Expect(TokenKind.String) || Expect(TokenKind.Float)))
+                {
+                    Diagnostics.Report(Peek().Line, Peek().Column, "Ожидался тип после ':'");
+                    SynchronizeTo(TokenKind.Semicolon);
+                    return;
+                }
+            }
+
+            // Проверка на инициализацию (= значение)
+            if (Match(TokenKind.Assignment))
+            {
+                Advance();
+                ParseExpression(); // разбираем выражение (например, число)
+            }
+            else
+            {
+                Diagnostics.Warning(Peek().Line, Peek().Column, $"Переменная '{Peek().Lexeme}' объявлена, но не инициализирована");
+            }
+
+            if (!Expect(TokenKind.Semicolon))
+            {
+                Diagnostics.Report(Peek().Line, Peek().Column, "Ожидался символ ';' в конце объявления переменной");
+                SynchronizeTo(TokenKind.Semicolon);
+            }
+
+            // TODO: добавить узел в AST
+        }
+
+
+        private void ParseAssignment()
+        {
+            Advance();
+
+            if (!Expect(TokenKind.Assignment))
+            {
+                Diagnostics.Report(Peek().Line, Peek().Column, "Ожидался оператор '=' после идентификатора");
+                SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                return;
+            }
+
+            ParseExpression(); // Пока просто литералы
+
+            if (!Expect(TokenKind.Semicolon))
+            {
+                Diagnostics.Report(Peek().Line, Peek().Column, "Ожидался ';' после выражения");
+            }
+
+            // TODO: добавить в AST узел Assignment
+        }
+
+        private void ParsePrint()
+        {
+            Advance(); // съедаем 'print'
+
+            if (!Expect(TokenKind.OpenParen))
+            {
+                Diagnostics.Report(Peek().Line, Peek().Column, "Ожидалась '(' после 'print'");
+                SynchronizeTo(TokenKind.Semicolon, TokenKind.CloseBrace, TokenKind.EndOfFile);
+                return;
+            }
+
+            if (Match(TokenKind.CloseParen))
+            {
+                Advance(); // пустой список
+            }
+            else
+            {
+                ParseExpression();
+
+                while (true)
+                {
+                    if (Match(TokenKind.Comma))
+                    {
+                        Advance();
+                        ParseExpression();
+                    }
+                    else if (Match(TokenKind.CloseParen))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Diagnostics.Report(Peek().Line, Peek().Column, "Ожидалась ',' или ')'");
+                        // Можно попытаться синхронизироваться до следующего возможного аргумента
+                        SynchronizeTo(TokenKind.Comma, TokenKind.CloseParen, TokenKind.Semicolon);
+                        if (Match(TokenKind.Comma))
                         {
-                            Diagnostics.Report(Peek().Line, Peek().Column, "Ожидалось выражение после запятой");
+                            Advance(); // пропускаем запятую и продолжаем
+                            ParseExpression();
+                            continue;
+                        }
+                        else if (Match(TokenKind.CloseParen))
+                        {
                             break;
                         }
-                    }
-
-                    // После последнего выражения не должно быть запятой
-                    if (Match(TokenKind.Identifier) || Match(TokenKind.StringText) || Match(TokenKind.Int) || Match(TokenKind.Float))
-                    {
-                        var nextToken = Peek();
-                        if (nextToken.Kind != TokenKind.Comma && nextToken.Kind != TokenKind.CloseParen)
+                        else
                         {
-                            Diagnostics.Report(nextToken.Line, nextToken.Column, "Ожидалась запятая или закрывающая скобка, но найдено " + nextToken.Lexeme);
+                            // если ни , ни ) — выходим
+                            return;
                         }
                     }
                 }
 
                 if (!Expect(TokenKind.CloseParen))
                 {
-                    // если нет закрывающей скобки — восстановимся до точки с запятой
-                    SynchronizeTo(TokenKind.Semicolon);
+                    Diagnostics.Report(Peek().Line, Peek().Column, "Ожидалась ')'");
+                    SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                    return;
                 }
             }
 
             if (!Expect(TokenKind.Semicolon))
             {
-                Diagnostics.Report(Peek().Line, Peek().Column, "Ожидалась ';' после вызова print");
-                // можно либо восстановиться, либо продолжить
+                Diagnostics.Report(Peek().Line, Peek().Column, "Ожидался символ ';'");
             }
         }
 
-        
-
-        // Новый метод для проверки отсутствия запятой между выражениями
-        private void CheckForMissingComma()
+        private void ParseBlock()
         {
-            var token = Peek();
-            if (Match(TokenKind.Identifier) || Match(TokenKind.StringText))
+            if (!Expect(TokenKind.OpenBrace))
             {
-                // Это выражение (например, строка или идентификатор), за которым не идёт запятая, то это ошибка
-                var nextToken = Peek(1); // посмотри на следующий токен
-                if (nextToken.Kind != TokenKind.Comma && nextToken.Kind != TokenKind.CloseParen)
-                {
-                    Diagnostics.Report(token.Line, token.Column, "Ожидалась запятая между аргументами");
-                }
-            }
-        }
-
-        private void ParseVariableDeclarationOrAssignment()
-        {
-            // Поддержка ключевого слова let (необязательное)
-            if (Match(TokenKind.Let))
-                Advance(); // пропускаем 'let'
-
-            if (!Match(TokenKind.Identifier))
-            {
-                Diagnostics.Report(Peek().Line, Peek().Column, "Ожидалось имя переменной");
+                Diagnostics.Report(Peek().Line, Peek().Column, "Ожидался '{' для начала блока");
                 return;
             }
 
-            var name = Peek();
-            Advance();
-
-            string type = null;
-
-            // необязательное указание типа
-            if (Match(TokenKind.Colon))
+            while (!Match(TokenKind.CloseBrace) && !Match(TokenKind.EndOfFile))
             {
-                Advance(); // пропускаем ':'
-
-                if (!Match(TokenKind.Int) && !Match(TokenKind.String) && !Match(TokenKind.Float))
-                {
-                    Diagnostics.Report(Peek().Line, Peek().Column, "Ожидался тип после ':'");
-                    return;
-                }
-
-                type = Peek().Lexeme;
-                Advance(); // пропускаем тип
+                ParseStatement();
             }
 
-            // Проверка на знак присваивания '='
-            if (Match(TokenKind.Assignment))
+            if (!Expect(TokenKind.CloseBrace))
             {
-                Advance(); // пропускаем '='
-
-                if (!ParseExpression())
-                {
-                    Diagnostics.Report(Peek().Line, Peek().Column, "Ожидалось выражение после '='");
-                    return;
-                }
-            }
-            else
-            {
-                // Если нет присваивания, это просто объявление без инициализации
-                Diagnostics.Warning(Peek().Line, Peek().Column, $"Переменная '{name.Lexeme}' объявлена, но не инициализирована.");
+                Diagnostics.Report(Peek().Line, Peek().Column, "Ожидался '}' для завершения блока");
             }
 
-            if (!Expect(TokenKind.Semicolon))
-            {
-                Diagnostics.Report(Peek().Line, Peek().Column, "Ожидалась ';' в конце объявления переменной");
-            }
-
-            // Для отладки (можно убрать позже)
-            lexems.Add($"Variable Declaration: {name.Lexeme}" + (type != null ? $" : {type}" : "") + (Match(TokenKind.Assignment) ? " = ...;" : " ;"));
+            // TODO: здесь можно будет возвращать AST-узел BlockNode
         }
 
 
     }
+
+
 }

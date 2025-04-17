@@ -35,13 +35,13 @@
             this.tabEx1 = new System.Windows.Forms.TabPage();
             this.tabEx2 = new System.Windows.Forms.TabPage();
             this.scintilla2 = new ScintillaNET.Scintilla();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.tabConsol = new System.Windows.Forms.TabControl();
+            this.tabAnalysis = new System.Windows.Forms.TabPage();
+            this.rtbxAnalysis = new System.Windows.Forms.RichTextBox();
             this.tabOutput = new System.Windows.Forms.TabPage();
             this.rtbxOutput = new System.Windows.Forms.RichTextBox();
-            this.tabAnalysis = new System.Windows.Forms.TabPage();
-            this.tabConsol = new System.Windows.Forms.TabControl();
-            this.rtbxAnalysis = new System.Windows.Forms.RichTextBox();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -50,10 +50,10 @@
             this.tabExs.SuspendLayout();
             this.tabEx1.SuspendLayout();
             this.tabEx2.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
-            this.tabOutput.SuspendLayout();
-            this.tabAnalysis.SuspendLayout();
             this.tabConsol.SuspendLayout();
+            this.tabAnalysis.SuspendLayout();
+            this.tabOutput.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // scintilla1
@@ -65,8 +65,7 @@
             this.scintilla1.ScrollWidth = 5001;
             this.scintilla1.Size = new System.Drawing.Size(846, 245);
             this.scintilla1.TabIndex = 0;
-            this.scintilla1.Text = "x: int;\r\nlet y: int = 10;\r\nprint(y);\r\nwelcom = \"Hello, World!\";\r\nprint(welcom);\r\n" +
-    "\r\n// Errors\r\ny: int\r\nprint(\"omg);\r\n\r\n\r\n";
+            this.scintilla1.Text = "x: int;\r\nlet y: int = 10;\r\nwelcom = \"Hello, World!\";\r\n\r\n";
             this.scintilla1.WrapMode = ScintillaNET.WrapMode.Word;
             this.scintilla1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.scintilla1_KeyDown);
             // 
@@ -137,6 +136,69 @@
             this.scintilla2.Text = resources.GetString("scintilla2.Text");
             this.scintilla2.WrapMode = ScintillaNET.WrapMode.Word;
             // 
+            // tabConsol
+            // 
+            this.tabConsol.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabConsol.Controls.Add(this.tabAnalysis);
+            this.tabConsol.Controls.Add(this.tabOutput);
+            this.tabConsol.Location = new System.Drawing.Point(0, 3);
+            this.tabConsol.Name = "tabConsol";
+            this.tabConsol.SelectedIndex = 0;
+            this.tabConsol.Size = new System.Drawing.Size(860, 235);
+            this.tabConsol.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
+            this.tabConsol.TabIndex = 0;
+            // 
+            // tabAnalysis
+            // 
+            this.tabAnalysis.BackColor = System.Drawing.SystemColors.Window;
+            this.tabAnalysis.Controls.Add(this.rtbxAnalysis);
+            this.tabAnalysis.Location = new System.Drawing.Point(4, 22);
+            this.tabAnalysis.Name = "tabAnalysis";
+            this.tabAnalysis.Padding = new System.Windows.Forms.Padding(3);
+            this.tabAnalysis.Size = new System.Drawing.Size(852, 209);
+            this.tabAnalysis.TabIndex = 0;
+            this.tabAnalysis.Text = "Анализ";
+            // 
+            // rtbxAnalysis
+            // 
+            this.rtbxAnalysis.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rtbxAnalysis.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.rtbxAnalysis.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbxAnalysis.Location = new System.Drawing.Point(6, 4);
+            this.rtbxAnalysis.Name = "rtbxAnalysis";
+            this.rtbxAnalysis.Size = new System.Drawing.Size(843, 202);
+            this.rtbxAnalysis.TabIndex = 0;
+            this.rtbxAnalysis.Text = "";
+            // 
+            // tabOutput
+            // 
+            this.tabOutput.BackColor = System.Drawing.SystemColors.Window;
+            this.tabOutput.Controls.Add(this.rtbxOutput);
+            this.tabOutput.Location = new System.Drawing.Point(4, 22);
+            this.tabOutput.Name = "tabOutput";
+            this.tabOutput.Padding = new System.Windows.Forms.Padding(3);
+            this.tabOutput.Size = new System.Drawing.Size(852, 209);
+            this.tabOutput.TabIndex = 3;
+            this.tabOutput.Text = "Вывод";
+            // 
+            // rtbxOutput
+            // 
+            this.rtbxOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rtbxOutput.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.rtbxOutput.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbxOutput.Location = new System.Drawing.Point(6, 4);
+            this.rtbxOutput.Name = "rtbxOutput";
+            this.rtbxOutput.Size = new System.Drawing.Size(843, 202);
+            this.rtbxOutput.TabIndex = 0;
+            this.rtbxOutput.Text = "";
+            this.rtbxOutput.TextChanged += new System.EventHandler(this.rtbxOutput_TextChanged);
+            // 
             // toolStrip1
             // 
             this.toolStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -165,69 +227,6 @@
             this.toolStripButton1.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay;
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
-            // tabOutput
-            // 
-            this.tabOutput.BackColor = System.Drawing.SystemColors.Window;
-            this.tabOutput.Controls.Add(this.rtbxOutput);
-            this.tabOutput.Location = new System.Drawing.Point(4, 22);
-            this.tabOutput.Name = "tabOutput";
-            this.tabOutput.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOutput.Size = new System.Drawing.Size(852, 209);
-            this.tabOutput.TabIndex = 3;
-            this.tabOutput.Text = "Вывод";
-            // 
-            // rtbxOutput
-            // 
-            this.rtbxOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rtbxOutput.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.rtbxOutput.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rtbxOutput.Location = new System.Drawing.Point(6, 4);
-            this.rtbxOutput.Name = "rtbxOutput";
-            this.rtbxOutput.Size = new System.Drawing.Size(843, 202);
-            this.rtbxOutput.TabIndex = 0;
-            this.rtbxOutput.Text = "";
-            this.rtbxOutput.TextChanged += new System.EventHandler(this.rtbxOutput_TextChanged);
-            // 
-            // tabAnalysis
-            // 
-            this.tabAnalysis.BackColor = System.Drawing.SystemColors.Window;
-            this.tabAnalysis.Controls.Add(this.rtbxAnalysis);
-            this.tabAnalysis.Location = new System.Drawing.Point(4, 22);
-            this.tabAnalysis.Name = "tabAnalysis";
-            this.tabAnalysis.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAnalysis.Size = new System.Drawing.Size(852, 209);
-            this.tabAnalysis.TabIndex = 0;
-            this.tabAnalysis.Text = "Анализ";
-            // 
-            // tabConsol
-            // 
-            this.tabConsol.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabConsol.Controls.Add(this.tabAnalysis);
-            this.tabConsol.Controls.Add(this.tabOutput);
-            this.tabConsol.Location = new System.Drawing.Point(0, 3);
-            this.tabConsol.Name = "tabConsol";
-            this.tabConsol.SelectedIndex = 0;
-            this.tabConsol.Size = new System.Drawing.Size(860, 235);
-            this.tabConsol.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
-            this.tabConsol.TabIndex = 0;
-            // 
-            // rtbxAnalysis
-            // 
-            this.rtbxAnalysis.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.rtbxAnalysis.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.rtbxAnalysis.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rtbxAnalysis.Location = new System.Drawing.Point(6, 4);
-            this.rtbxAnalysis.Name = "rtbxAnalysis";
-            this.rtbxAnalysis.Size = new System.Drawing.Size(843, 202);
-            this.rtbxAnalysis.TabIndex = 0;
-            this.rtbxAnalysis.Text = "";
-            // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
@@ -255,11 +254,11 @@
             this.tabExs.ResumeLayout(false);
             this.tabEx1.ResumeLayout(false);
             this.tabEx2.ResumeLayout(false);
+            this.tabConsol.ResumeLayout(false);
+            this.tabAnalysis.ResumeLayout(false);
+            this.tabOutput.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this.tabOutput.ResumeLayout(false);
-            this.tabAnalysis.ResumeLayout(false);
-            this.tabConsol.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}

@@ -61,11 +61,16 @@ namespace Demo
             List<Token> tokens = lexer.Tokenize();
             Parser parser = new Parser(tokens);
             parser.Parse();
-
+            
             rtbxAnalysis.Clear();
-            for (int i = 0; i < tokens.Count; i++)
+            //for (int i = 0; i < tokens.Count; i++)
+            //{
+            //    rtbxAnalysis.AppendText(tokens[i].Lexeme + "\r\n");
+            //}
+
+            for (int i = 0; i < parser.lexems.Count; i++)
             {
-                rtbxAnalysis.AppendText(tokens[i].Lexeme + "\r\n");
+                rtbxAnalysis.AppendText(parser.lexems[i] + "\r\n");
             }
 
             rtbxOutput.Clear();

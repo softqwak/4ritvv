@@ -13,43 +13,36 @@ namespace Demo
         Int,
         String,
         Float,
-
         // Идентификаторы (например: переменные, имена функций)
         Identifier,
-
         // Оператор присвоения
         Assignment, // =
-
         // Оператор сравнения
         Equal,  // ==
-
         // Оператор объявления типа
         Colon,  // :
-
         // Комментарии
         DoubleSlash,
-
         // Строки
         StringText,
         DoubleQuotes,  // "
-
+        // Числа
+        NumberInt,
+        NumberFloat,
         // Операторы арифметики
         Plus,       // +
         Minus,      // -
         Asterisk,   // *
         Slash,      // /
-
         // Скобки и разделители
         OpenParen,          // (
         CloseParen,         // )
         Semicolon,          // ;
         Comma,              // ,
         ExclamationMark,    // !
-
         // Блок кода
         OpenBrace,      // {
         CloseBrace,     // }
-
         // Ключевые слова языка
         If,
         Else,
@@ -65,11 +58,8 @@ namespace Demo
         Let,        // Объявление перемемнной
         Del,        // Удаление переменной
         Print,
-
-
         // Конец входного потока
         EndOfFile,
-
         // Недопустимый (неизвестный) символ
         Invalid
     }
@@ -77,16 +67,10 @@ namespace Demo
     public class Token
     {
         public TokenKind Kind { get; }
-
         public string Lexeme { get; }
-
         public int Position { get; }
-
         public int Line { get; }
-
         public int Column { get; }
-
-
         public Token(TokenKind kind, string lexeme, int pos, int line, int column)
         {
             Kind = kind;
