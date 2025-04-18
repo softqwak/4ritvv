@@ -71,10 +71,16 @@
     <Compile Include="Lexer\SimpleLexer.cs" />
     <Compile Include="Lexer\Token.cs" />
     <Compile Include="Language\simple.cs" />
-    <Compile Include="Parser\DeclarationParser.cs" />
-    <Compile Include="Parser\ExpressionParser.cs" />
+    <Compile Include="Parser\ParseArgument.cs" />
+    <Compile Include="Parser\ParseAssignment.cs" />
+    <Compile Include="Parser\ParseBlock.cs" />
+    <Compile Include="Parser\ParseExpression.cs" />
+    <Compile Include="Parser\ParseIf.cs" />
+    <Compile Include="Parser\ParsePrint.cs" />
     <Compile Include="Parser\Parser.cs" />
-    <Compile Include="Parser\StatementParser.cs" />
+    <Compile Include="Parser\ParseStatements.cs" />
+    <Compile Include="Parser\ParseUtils.cs" />
+    <Compile Include="Parser\ParseVariableDeclaration.cs" />
     <Compile Include="TestForm.cs">
       <SubType>Form</SubType>
     </Compile>

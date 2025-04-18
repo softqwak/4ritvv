@@ -65,7 +65,8 @@
             this.scintilla1.ScrollWidth = 5001;
             this.scintilla1.Size = new System.Drawing.Size(846, 245);
             this.scintilla1.TabIndex = 0;
-            this.scintilla1.Text = "x: int;\r\nlet y: int = 10;\r\nwelcom = \"Hello, World!\";\r\n\r\n";
+            this.scintilla1.Text = "x: int;\r\nlet y: int = 10;\r\nwelcom = \"Hello, World!\";\r\n\r\nif a + b * 2 > c - 1 && n" +
+    "ame == \"admin\" {\r\n    print(\"Access granted\");\r\n}";
             this.scintilla1.WrapMode = ScintillaNET.WrapMode.Word;
             this.scintilla1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.scintilla1_KeyDown);
             // 

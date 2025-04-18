@@ -125,11 +125,90 @@ namespace Demo
                 }
             }
 
+            // Проверка на составные операторы (например, ==, !=, <=, >=)
+            if (ch == '=')
+            {
+                if (_position + 1 < _source.Length && _source[_position + 1] == '=')
+                {
+                    _position += 2; // Пропускаем оба символа '=='
+                    _column += 2;
+                    return new Token(TokenKind.Equal, "==", _position - 2, _line, _column);
+                }
+                return new Token(TokenKind.Assignment, "=", _position++, _line, _column++);
+            }
+            if (ch == '!')
+            {
+                if (_position + 1 < _source.Length && _source[_position + 1] == '=')
+                {
+                    _position += 2; // Пропускаем оба символа '!='
+                    _column += 2;
+                    return new Token(TokenKind.NotEqual, "!=", _position - 2, _line, _column);
+                }
+                return new Token(TokenKind.Not, "!", _position++, _line, _column++);
+            }
+            if (ch == '<')
+            {
+                if (_position + 1 < _source.Length && _source[_position + 1] == '=')
+                {
+                    _position += 2; // Пропускаем оба символа '<='
+                    _column += 2;
+                    return new Token(TokenKind.LessEqual, "<=", _position - 2, _line, _column);
+                }
+                return new Token(TokenKind.Less, "<", _position++, _line, _column++);
+            }
+            if (ch == '>')
+            {
+                if (_position + 1 < _source.Length && _source[_position + 1] == '=')
+                {
+                    _position += 2; // Пропускаем оба символа '>='
+                    _column += 2;
+                    return new Token(TokenKind.GreaterEqual, ">=", _position - 2, _line, _column);
+                }
+                return new Token(TokenKind.Greater, ">", _position++, _line, _column++);
+            }
+            if (ch == '&')
+            {
+                if (_position + 1 < _source.Length && _source[_position + 1] == '&')
+                {
+                    _position += 2; // Пропускаем оба символа '&&'
+                    _column += 2;
+                    return new Token(TokenKind.AndAnd, "&&", _position - 2, _line, _column);
+                }
+                return new Token(TokenKind.Invalid, "&", _position++, _line, _column++);
+            }
+            if (ch == '|')
+            {
+                if (_position + 1 < _source.Length && _source[_position + 1] == '|')
+                {
+                    _position += 2; // Пропускаем оба символа '&&'
+                    _column += 2;
+                    return new Token(TokenKind.OrOr, "||", _position - 2, _line, _column);
+                }
+                return new Token(TokenKind.Invalid, "|", _position++, _line, _column++);
+            }
+
+            // Обработка комментариев "//"
+            if (ch == '/' && _position + 1 < _source.Length && _source[_position + 1] == '/')
+            {
+                int start = _position;
+                _position += 2; // Пропустить "//"
+                _column += 2;
+
+                // Пропускаем весь комментарий
+                while (_position < _source.Length && _source[_position] != '\n' && _source[_position] != '\r')
+                {
+                    _position++;
+                    _column++;
+                }
+
+                return new Token(TokenKind.DoubleSlash, _source.Substring(start, _position - start), start, _line, _column);
+            }
+
+            // Прочие символы
             int tokenPos = _position++;
-            char tokenChar = _source[tokenPos];
+            var tokenChar = _source[tokenPos];
             switch (tokenChar)
             {
-                case '=': return new Token(TokenKind.Assignment, "=", tokenPos, _line, _column);
                 case ':': return new Token(TokenKind.Colon, ":", tokenPos, _line, _column);
                 case '{': return new Token(TokenKind.OpenBrace, "{", tokenPos, _line, _column);
                 case '}': return new Token(TokenKind.CloseBrace, "}", tokenPos, _line, _column);
@@ -137,15 +216,17 @@ namespace Demo
                 case '-': return new Token(TokenKind.Minus, "-", tokenPos, _line, _column);
                 case '*': return new Token(TokenKind.Asterisk, "*", tokenPos, _line, _column);
                 case '/': return new Token(TokenKind.Slash, "/", tokenPos, _line, _column);
+                case '%': return new Token(TokenKind.Percent, "%", tokenPos, _line, _column);
                 case '(': return new Token(TokenKind.OpenParen, "(", tokenPos, _line, _column);
                 case ')': return new Token(TokenKind.CloseParen, ")", tokenPos, _line, _column);
                 case ';': return new Token(TokenKind.Semicolon, ";", tokenPos, _line, _column);
                 case ',': return new Token(TokenKind.Comma, ",", tokenPos, _line, _column);
-                case '!': return new Token(TokenKind.ExclamationMark, "!", tokenPos, _line, _column);
+                case '!': return new Token(TokenKind.Not, "!", tokenPos, _line, _column);
             }
 
             return new Token(TokenKind.Invalid, tokenChar.ToString(), tokenPos, _line, _column);
         }
+
 
         private static TokenKind KeywordToKind(string word)
         {
@@ -154,10 +235,6 @@ namespace Demo
                 case "int": return TokenKind.Int;
                 case "string": return TokenKind.String;
                 case "float": return TokenKind.Float;
-
-                case "==": return TokenKind.Equal;
-
-                case "//": return TokenKind.DoubleSlash;
 
                 case "if": return TokenKind.If;
                 case "else": return TokenKind.Else;

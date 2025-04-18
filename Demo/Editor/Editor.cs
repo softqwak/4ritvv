@@ -33,46 +33,56 @@ namespace Demo
 
             // Подсветка скобок
             scintilla.IndentationGuides = IndentView.LookBoth;
-            scintilla.UpdateUI += (s, e) => HighlightBraces(scintilla);
 
             // Подсветка синтаксиса
             scintilla.TextChanged += (s, e) => HighlightSiMPLESyntax((Scintilla)s);
 
-            HighlightSiMPLESyntax(scintilla); // первая подсветка
+            // Создание индикаторов
+            scintilla.Indicators[0].Style = IndicatorStyle.StraightBox;
+            scintilla.Indicators[0].ForeColor = Color.FromArgb(255, 0, 0); // светло-красный
+            scintilla.Indicators[0].Under = true; // чтобы индикатор не мешал тексту
+
+            scintilla.Indicators[1].Style = IndicatorStyle.StraightBox;
+            scintilla.Indicators[1].ForeColor = Color.DarkGoldenrod;
+            scintilla.Indicators[1].Under = true;
+
+            // Всегда гарантируем хотя бы одну пустую строку внизу
+            AddEmptyLineIfNeeded(scintilla);
+
+            // Подписываемся на UpdateUI — он срабатывает и при изменении позиции курсора
+            scintilla.UpdateUI += (s, e) => EnsureEmptyLine(scintilla);
         }
 
-        public static void HighlightBraces(Scintilla editor)
+        private static void AddEmptyLineIfNeeded(Scintilla sci)
         {
-            int pos = editor.CurrentPosition;
-            char curChar = (char)editor.GetCharAt(pos);
-            int bracePos1 = -1;
+            var txt = sci.Text;
+            if (txt.Length == 0 || txt[txt.Length - 1] != '\n')
+                sci.AppendText("\n");
+        }
 
-            if ("()[]{}".IndexOf(curChar) >= 0)
-                bracePos1 = pos;
-            else if (pos > 0)
-            {
-                char prevChar = (char)editor.GetCharAt(pos - 1);
-                if ("()[]{}".IndexOf(prevChar) >= 0)
-                    bracePos1 = pos - 1;
-            }
+        private static void EnsureEmptyLine(Scintilla sci)
+        {
+            // 1) Сохраняем где был курсор
+            int oldPos = sci.CurrentPosition;
 
-            if (bracePos1 >= 0)
+            // 2) Вычисляем номер последней строки и номер строки курсора
+            int lastLine = sci.Lines.Count - 1;
+            int curLine = sci.LineFromPosition(oldPos);
+
+            // 3) Если курсор на последней (гарантированно пустой) строке — добавляем ещё одну
+            if (curLine >= lastLine)
             {
-                int bracePos2 = editor.BraceMatch(bracePos1);
-                if (bracePos2 != Scintilla.InvalidPosition)
-                {
-                    editor.BraceHighlight(bracePos1, bracePos2);
-                }
-                else
-                {
-                    editor.BraceBadLight(bracePos1);
-                }
-            }
-            else
-            {
-                editor.BraceHighlight(Scintilla.InvalidPosition, Scintilla.InvalidPosition);
+                // позиция конца последней линии
+                int insertPos = sci.Lines[lastLine].Position + sci.Lines[lastLine].Length;
+                // вставляем символ новой строки
+                sci.InsertText(insertPos, "\n");
+                // возвращаем курсор на своё старое место
+                sci.CurrentPosition = oldPos;
+                // опционально: чтобы маркер каретки тоже поставился корректно
+                sci.ScrollCaret();
             }
         }
+
 
         public static void HighlightSiMPLESyntax(Scintilla editor)
         {

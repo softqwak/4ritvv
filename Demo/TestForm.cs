@@ -5,6 +5,7 @@ using ScintillaNET;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Data.Common;
 
 #endregion Using Directives
 
@@ -28,7 +29,7 @@ namespace Demo
             // Настройка транслятора
             Translator translator = new Translator();
 
-           
+
 
         }
 
@@ -56,12 +57,15 @@ namespace Demo
             else if (tabExs.SelectedTab == tabEx2)
                 activeEditor = scintilla2;
 
+            // Сначала очищаем предыдущие индикаторы этого типа (по всей длине, если надо)
+            ClearAllIndicators(activeEditor);
+
             string code = activeEditor.Text;
             SimpleLexer lexer = new SimpleLexer(code);
             List<Token> tokens = lexer.Tokenize();
             Parser parser = new Parser(tokens);
             parser.Parse();
-            
+
             rtbxAnalysis.Clear();
             //for (int i = 0; i < tokens.Count; i++)
             //{
@@ -76,20 +80,42 @@ namespace Demo
             rtbxOutput.Clear();
             for (int i = 0; i < Diagnostics._messagesError.Count; i++)
             {
-            rtbxOutput.SelectionColor = Color.DarkRed;
+                rtbxOutput.SelectionColor = Color.DarkRed;
                 rtbxOutput.AppendText(Diagnostics._messagesError[i] + "\r\n");
             }
+            activeEditor.IndicatorCurrent = 0;
+
+            foreach (var tmp in Diagnostics._markErrors)
+            {
+                int pos = activeEditor.Lines[tmp.Item1 - 1].Position;
+                int posEnd = activeEditor.Lines[tmp.Item1].Position;
+
+                // Применяем индикатор на один символ
+                activeEditor.IndicatorCurrent = 0;
+                activeEditor.IndicatorFillRange(pos, posEnd - pos); // 1 символ
+            }
+
 
             for (int i = 0; i < Diagnostics._messagesWarning.Count; i++)
             {
-            rtbxOutput.SelectionColor = Color.DarkGoldenrod;
+                rtbxOutput.SelectionColor = Color.DarkGoldenrod;
                 rtbxOutput.AppendText(Diagnostics._messagesWarning[i] + "\r\n");
+            }
+            activeEditor.IndicatorCurrent = 1;
+
+            foreach (var tmp in Diagnostics._markWarnings)
+            {
+                int pos = activeEditor.Lines[tmp.Item1 - 1].Position;
+                int posEnd = activeEditor.Lines[tmp.Item1].Position;
+                // Применяем индикатор на один символ
+                activeEditor.IndicatorCurrent = 1;
+                activeEditor.IndicatorFillRange(pos, posEnd - pos); // 1 символ
             }
         }
 
         private void TestForm_KeyDown(object sender, KeyEventArgs e)
         {
-            
+
         }
 
         private void scintilla1_KeyDown(object sender, KeyEventArgs e)
@@ -103,6 +129,15 @@ namespace Demo
         private void rtbxOutput_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        void ClearAllIndicators(Scintilla editor)
+        {
+            for (int i = 0; i <= 1; i++) // если используешь только 0 и 1
+            {
+                editor.IndicatorCurrent = i;
+                editor.IndicatorClearRange(0, editor.TextLength);
+            }
         }
     }
 }
