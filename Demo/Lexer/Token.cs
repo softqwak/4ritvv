@@ -58,6 +58,7 @@ namespace Demo
         Slash,      // /
         Percent,    // %
         Not,        // !
+        PlusPlus,   // ++
 
         // Скобки и разделители
         OpenParen,          // (
@@ -128,6 +129,7 @@ namespace Demo
             { TokenKind.Minus, TokenCategory.Operator },
             { TokenKind.Asterisk, TokenCategory.Operator },
             { TokenKind.Slash, TokenCategory.Operator },
+            { TokenKind.PlusPlus, TokenCategory.Operator },
 
             // Операторы сравнения
             { TokenKind.Equal, TokenCategory.OperatorComparison },

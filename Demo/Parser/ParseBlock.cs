@@ -1,26 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Demo
 {
     public partial class Parser
     {
-        private void ParseBlock()
+        // Парсит блок кода { ... } и возвращает узел AST
+        // Возвращает BlockStmtAst или null в случае ошибки
+        private StmtAst ParseBlock()
         {
+            var openBraceToken = Peek();
             if (!Expect(TokenKind.OpenBrace, "Ожидался '{' для начала блока"))
-                return;
-
-            while (!Match(TokenKind.CloseBrace) && !Match(TokenKind.EndOfFile))
             {
-                ParseStatement();
+                SynchronizeTo(TokenKind.CloseBrace, TokenKind.Semicolon, TokenKind.EndOfFile);
+                return null;
             }
 
-            Expect(TokenKind.CloseBrace, "Ожидался '}' для завершения блока");
-            // TODO: здесь можно будет возвращать AST-узел BlockNode
-        }
+            var statements = new List<StmtAst>();
+            while (!Match(TokenKind.CloseBrace) && !Match(TokenKind.EndOfFile))
+            {
+                var stmt = ParseStatement();
+                if (stmt != null)
+                {
+                    statements.Add(stmt);
+                }
+            }
 
+            if (!Expect(TokenKind.CloseBrace, "Ожидался '}' для завершения блока"))
+            {
+                SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                return null;
+            }
+
+            return new BlockStmtAst(openBraceToken.Line, openBraceToken.Column, statements);
+        }
     }
 }

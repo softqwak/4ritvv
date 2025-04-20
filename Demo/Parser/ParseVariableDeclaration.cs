@@ -1,78 +1,75 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Demo
+﻿namespace Demo
 {
     public partial class Parser
     {
-        private string variableName = "";
-        private void ParseVariableDeclaration()
+        // Парсит объявление переменной и возвращает узел AST
+        // Поддерживает формы: "x: int;" и "let x: int;" с опциональной инициализацией
+        private StmtAst ParseVariableDeclaration()
         {
-            Expect(TokenKind.Let); // обязательно съедаем 'let' при наличии
+            bool hasLet = false;
+            Token letToken = null;
 
-            if (!ExpectIdentifier()) return;
-
-            ParseOptionalTypeAnnotation();
-            ParseOptionalInitializer();
-
-            if (!Expect(TokenKind.Semicolon))
+            // Проверяем наличие ключевого слова 'let'
+            if (Match(TokenKind.Let))
             {
-                Error("Ожидался символ ';' в конце объявления переменной");
-                //SynchronizeTo(TokenKind.Semicolon);
+                hasLet = true;
+                letToken = Peek();
+                Advance(); // Съедаем 'let'
             }
 
-            // TODO: добавить узел в AST
-        }
-
-        private bool ExpectIdentifier()
-        {
-            var token = Peek();
-            if (token.Kind == TokenKind.Invalid)
-            {
-                Error("Некорректная переменная", token);
-                SynchronizeTo(TokenKind.Semicolon);
-                return false;
-            }
-
+            // Ожидаем идентификатор
+            var idToken = Peek();
             if (!Expect(TokenKind.Identifier, "Ожидался идентификатор переменной"))
             {
-                SynchronizeTo(TokenKind.Semicolon);
-                return false;
+                SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                return null;
             }
-            variableName = token.Lexeme;
-            return true;
-        }
 
-        private void ParseOptionalTypeAnnotation()
-        {
-            if (Match(TokenKind.Colon))
+            // Ожидаем двоеточие
+            if (!Expect(TokenKind.Colon, "Ожидался ':' после идентификатора"))
             {
-                Advance(); // съедаем ':'
-
-                if (!(Expect(TokenKind.Int) || Expect(TokenKind.String) || Expect(TokenKind.Float)))
-                {
-                    Error("Ожидался тип после ':'");
-                    SynchronizeTo(TokenKind.Semicolon);
-                }
+                SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                return null;
             }
-        }
 
-        private void ParseOptionalInitializer()
-        {
+            // Ожидаем тип (int, string, float)
+            var typeToken = Peek();
+            if (!Match(TokenKind.Int, TokenKind.String, TokenKind.Float))
+            {
+                Error("Ожидался тип (int, string или float)", typeToken);
+                SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                return null;
+            }
+            var type = typeToken.Lexeme;
+            Advance(); // Съедаем тип
+
+            ExprAst initializer = null;
+            // Проверяем наличие инициализации
             if (Match(TokenKind.Assignment))
             {
-                Advance(); // пропускаем =
-                ParseExpression();
+                Advance(); // Съедаем '='
+                initializer = ParseExpressionAst();
+                if (initializer == null)
+                {
+                    SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                    return null;
+                }
             }
             else
             {
-
-                Warning($"Переменная '{variableName}' объявлена, но не инициализирована");
+                // Выдаём предупреждение, если нет инициализации
+                Warning("Переменная объявлена без инициализации", idToken);
             }
-        }
 
+            // Ожидаем точку с запятой
+            if (!Expect(TokenKind.Semicolon, "Ожидался ';' после объявления переменной"))
+            {
+                SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                return null;
+            }
+
+            // Создаём узел AST
+            return new VarDeclStmtAst(idToken.Line, idToken.Column, idToken.Lexeme, type, initializer);
+        }
     }
 }

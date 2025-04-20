@@ -1,43 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Demo
+﻿namespace Demo
 {
     public partial class Parser
     {
-        private void ParseStatement()
+        private StmtAst ParseStatement()
         {
-            var token = Peek().Kind;
+            var token = Peek();
             var tokenNext = Peek(1).Kind;
             if (Match(TokenKind.Let))
             {
-                ParseVariableDeclaration();
+                return ParseVariableDeclaration();
             }
-            else if (token == TokenKind.Identifier && tokenNext == TokenKind.Colon)
+            else if (token.Kind == TokenKind.Identifier && tokenNext == TokenKind.Colon)
             {
-                // Объявление без 'let' (например, при глобальном определении)
-                ParseVariableDeclaration();
+                return ParseVariableDeclaration();
             }
-            else if (tokenNext == TokenKind.Assignment)
+            else if (token.Kind == TokenKind.Identifier && tokenNext == TokenKind.Assignment)
             {
-                ParseAssignment();
+                return ParseAssignment();
             }
-            else if (token == TokenKind.Print)
+            else if (token.Kind == TokenKind.Print)
             {
-                ParsePrint();
+                return ParsePrint();
             }
-            else if (token == TokenKind.If)
+            else if (token.Kind == TokenKind.If)
             {
-                ParseIf();
+                return ParseIf();
+            }
+            else if (token.Kind == TokenKind.For)
+            {
+                return ParseFor();
             }
             else
             {
-                Error($"Синтаксическая ошибка - '{Peek().Lexeme}' неизвестная конструкция");
+                Error($"Синтаксическая ошибка - '{token.Lexeme}' неизвестная конструкция", token);
                 SynchronizeTo(TokenKind.Semicolon, TokenKind.CloseBrace, TokenKind.Identifier);
                 Advance();
+                return null;
             }
         }
     }

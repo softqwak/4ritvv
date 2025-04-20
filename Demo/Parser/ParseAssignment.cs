@@ -1,27 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Demo
+﻿namespace Demo
 {
     public partial class Parser
     {
-        private void ParseAssignment()
+        // Парсит присваивание и возвращает узел AST
+        private StmtAst ParseAssignment()
         {
-            Advance();
+            var idToken = Peek();
+            Advance(); // Съедаем идентификатор
 
             if (!Expect(TokenKind.Assignment, "Ожидался оператор '=' после идентификатора"))
             {
                 SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
-                return;
+                return null;
             }
 
-            ParseExpression(); // Пока просто литералы
+            var value = ParseExpressionAst();
+            if (value == null)
+            {
+                SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                return null;
+            }
 
-            Expect(TokenKind.Semicolon, "Ожидался ';' после выражения");
-            // TODO: добавить в AST узел Assignment
+            if (!Expect(TokenKind.Semicolon, "Ожидался ';' после выражения"))
+            {
+                SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                return null;
+            }
+
+            return new AssignStmtAst(idToken.Line, idToken.Column, idToken.Lexeme, value);
         }
     }
 }

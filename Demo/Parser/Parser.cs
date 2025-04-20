@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Collections.Generic;
 
 namespace Demo
 {
@@ -12,10 +6,10 @@ namespace Demo
     {
         private List<Token> _tokens = new List<Token>();
         public List<string> lexems = new List<string>();
-
         private int _position;
         private int _line;
         private int _column;
+        private List<StmtAst> _programAst; // Список узлов AST для программы
 
         public Parser(List<Token> tokens)
         {
@@ -23,34 +17,37 @@ namespace Demo
             _position = 0;
             _line = 0;
             _column = 0;
+            _programAst = new List<StmtAst>();
         }
 
-
-        public void Parse()
+        public List<StmtAst> Parse()
         {
             Diagnostics._messagesError.Clear();
             Diagnostics._messagesWarning.Clear();
             Diagnostics._markWarnings.Clear();
             Diagnostics._markErrors.Clear();
+            _programAst.Clear();
             ParseProgram();
+            return _programAst;
         }
 
         private void ParseProgram()
         {
             while (!Match(TokenKind.EndOfFile))
             {
-                ParseTopLevel();
+                var stmt = ParseTopLevel();
+                if (stmt != null)
+                {
+                    _programAst.Add(stmt);
+                }
             }
         }
 
-        private void ParseTopLevel()
+        private StmtAst ParseTopLevel()
         {
-            // В будущем здесь будет обработка функций, классов, и т.д.
+            // В будущем здесь будет обработка функций, классов и т.д.
             // Пока обрабатываем только операторы верхнего уровня
-            ParseStatement();
-        }   
-
+            return ParseStatement();
+        }
     }
-
-
 }

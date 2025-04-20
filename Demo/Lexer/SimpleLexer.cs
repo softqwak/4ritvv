@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Demo
 {
@@ -185,6 +186,17 @@ namespace Demo
                     return new Token(TokenKind.OrOr, "||", _position - 2, _line, _column);
                 }
                 return new Token(TokenKind.Invalid, "|", _position++, _line, _column++);
+            }
+
+            if (ch == '+')
+            {
+                if (_position + 1 < _source.Length && _source[_position + 1] == '+')
+                {
+                    _position += 2; // Пропускаем оба символа '++'
+                    _column += 2;
+                    return new Token(TokenKind.PlusPlus, "++", _position - 2, _line, _column);
+                }
+                return new Token(TokenKind.Plus, "+", _position++, _line, _column++);
             }
 
             // Обработка комментариев "//"

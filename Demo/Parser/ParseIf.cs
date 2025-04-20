@@ -1,79 +1,144 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Demo
 {
     public partial class Parser
     {
-        private void ParseIf()
+        // Парсит конструкцию if-else и возвращает узел AST
+        private StmtAst ParseIf()
         {
-            Advance(); // пропустить 'if'
+            var ifToken = Peek();
+            Advance(); // Съедаем 'if'
 
-            if (Match(TokenKind.OpenParen))
+            // Проверяем опциональные скобки
+            bool hasParens = Match(TokenKind.OpenParen);
+            if (hasParens)
             {
-                Advance(); // (
-                ParseCondition(); // обрабатываем условие
-                Expect(TokenKind.CloseParen, "Ожидалась закрывающая скобка ')'");
-            }
-            else
-            {
-                // Если нет скобок, сразу парсим условие
-                ParseCondition();
+                Advance(); // Съедаем '('
             }
 
-            ParseBlock(); // ожидаем { ... }
+            // Парсим условие
+            var condition = ParseConditionAst();
+            if (condition == null)
+            {
+                SynchronizeTo(TokenKind.OpenBrace, TokenKind.Semicolon, TokenKind.EndOfFile);
+                return null;
+            }
 
+            // Проверяем закрывающую скобку, если были открывающие
+            if (hasParens && !Expect(TokenKind.CloseParen, "Ожидалась закрывающая скобка ')'"))
+            {
+                SynchronizeTo(TokenKind.OpenBrace, TokenKind.Semicolon, TokenKind.EndOfFile);
+                return null;
+            }
+
+            // Парсим блок then
+            var thenBody = ParseBlock();
+            if (thenBody == null)
+            {
+                SynchronizeTo(TokenKind.Else, TokenKind.Semicolon, TokenKind.EndOfFile);
+                return null;
+            }
+
+            // Проверяем наличие else
+            StmtAst elseBody = null;
             if (Match(TokenKind.Else))
             {
-                Advance(); // else
-                ParseBlock();
+                Advance(); // Съедаем 'else'
+                elseBody = ParseBlock();
+                if (elseBody == null)
+                {
+                    SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                    return null;
+                }
             }
+
+            // Создаём узел AST
+            return new IfStmtAst(ifToken.Line, ifToken.Column, condition, thenBody, elseBody);
         }
 
-        // Разбор условия (логическое выражение)
-        private void ParseCondition()
+        // Парсит условие (логическое выражение) и возвращает узел AST
+        private ExprAst ParseConditionAst()
         {
-            ParseLogicalOr(); // начинаем с логического ИЛИ
+            return ParseLogicalOrAst();
         }
 
-        // Логическое ИЛИ (или операторы)
-        private void ParseLogicalOr()
+        // Парсит логическое ИЛИ (||) и возвращает узел AST
+        private ExprAst ParseLogicalOrAst()
         {
-            ParseLogicalAnd(); // обрабатываем логическое И сначала
+            var left = ParseLogicalAndAst();
+            if (left == null)
+            {
+                return null;
+            }
+
             while (Match(TokenKind.OrOr))
             {
-                Advance(); // если нашли '||'
-                ParseLogicalAnd(); // снова обрабатываем логическое И
+                var opToken = Peek();
+                var op = opToken.Lexeme; // "||"
+                Advance(); // Съедаем '||'
+                var right = ParseLogicalAndAst();
+                if (right == null)
+                {
+                    return null;
+                }
+                left = new LogicalExprAst(opToken.Line, opToken.Column, op, left, right);
             }
+
+            return left;
         }
 
-        // Логическое И (и операторы)
-        private void ParseLogicalAnd()
+        // Парсит логическое И (&&) и возвращает узел AST
+        private ExprAst ParseLogicalAndAst()
         {
-            ParseComparison(); // начинаем с операторов сравнения
+            var left = ParseComparisonAst();
+            if (left == null)
+            {
+                return null;
+            }
+
             while (Match(TokenKind.AndAnd))
             {
-                Advance(); // если нашли '&&'
-                ParseComparison(); // снова проверяем операторы сравнения
+                var opToken = Peek();
+                var op = opToken.Lexeme; // "&&"
+                Advance(); // Съедаем '&&'
+                var right = ParseComparisonAst();
+                if (right == null)
+                {
+                    return null;
+                }
+                left = new LogicalExprAst(opToken.Line, opToken.Column, op, left, right);
             }
+
+            return left;
         }
 
-        // Сравнение (например, ==, !=, >, <)
-        private void ParseComparison()
+        // Парсит сравнение (==, !=, >, <, <=, >=) и возвращает узел AST
+        private ExprAst ParseComparisonAst()
         {
-            ParseExpression(); // здесь используется ваш парсер выражений (сложение, вычитание и т.д.)
-
-            while (Match(TokenKind.Equal, TokenKind.NotEqual,
-                         TokenKind.Less, TokenKind.LessEqual,
-                         TokenKind.Greater, TokenKind.GreaterEqual))
+            var left = ParseExpressionAst();
+            if (left == null)
             {
-                Advance(); // операторы сравнения
-                ParseExpression(); // снова обрабатываем выражение
+                return null;
             }
+
+            while (Match(TokenKind.Less, TokenKind.LessEqual, TokenKind.Greater, TokenKind.GreaterEqual,
+                        TokenKind.Equal, TokenKind.NotEqual))
+            {
+                var opToken = Peek();
+                var op = opToken.Lexeme; // "<", "<=", ">", ">=", "==", "!="
+                Advance(); // Съедаем оператор сравнения
+                var right = ParseExpressionAst();
+                if (right == null)
+                {
+                    return null;
+                }
+                left = new BinaryExprAst(opToken.Line, opToken.Column, op, left, right);
+            }
+
+            return left;
         }
+
 
     }
 }

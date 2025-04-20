@@ -1,64 +1,138 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Demo
+﻿namespace Demo
 {
     public partial class Parser
     {
-        // Парсинг общего выражения (ариметическое или логическое)
-        private void ParseExpression()
+        // Парсит арифметическое выражение (+, -) и возвращает узел AST
+        private ExprAst ParseExpressionAst()
         {
-            ParseTerm();
+            var left = ParseTermAst();
+            if (left == null)
+            {
+                return null;
+            }
+
             while (Match(TokenKind.Plus, TokenKind.Minus))
             {
-                Advance(); // + или -
-                ParseTerm();
+                var opToken = Peek();
+                var op = opToken.Lexeme; // "+" или "-"
+                Advance(); // Съедаем '+' или '-'
+                var right = ParseTermAst();
+                if (right == null)
+                {
+                    return null;
+                }
+                left = new BinaryExprAst(opToken.Line, opToken.Column, op, left, right);
             }
+
+            return left;
         }
 
-        // Парсинг термов (умножение, деление, остаток)
-        private void ParseTerm()
+        // Парсит терм (*, /, %) и возвращает узел AST
+        private ExprAst ParseTermAst()
         {
-            ParseFactor();
+            var left = ParseFactorAst();
+            if (left == null)
+            {
+                return null;
+            }
+
             while (Match(TokenKind.Asterisk, TokenKind.Slash, TokenKind.Percent))
             {
-                Advance(); // * / %
-                ParseFactor();
+                var opToken = Peek();
+                var op = opToken.Lexeme; // "*", "/" или "%"
+                Advance(); // Съедаем '*', '/' или '%'
+                var right = ParseFactorAst();
+                if (right == null)
+                {
+                    return null;
+                }
+                left = new BinaryExprAst(opToken.Line, opToken.Column, op, left, right);
             }
+
+            return left;
         }
 
-        // Парсинг факторов (например, скобки или переменные)
-        private void ParseFactor()
+        // Парсит фактор (числа, строки, идентификаторы, скобки) и возвращает узел AST
+        private ExprAst ParseFactorAst()
         {
             if (Match(TokenKind.OpenParen))
             {
-                Advance(); // (
-                ParseExpression(); // рекурсивно обрабатываем выражение
-                Expect(TokenKind.CloseParen, "Ожидалась ')'");
+                var openParenToken = Peek();
+                Advance(); // Съедаем '('
+                var expr = ParseExpressionAst();
+                if (expr == null)
+                {
+                    return null;
+                }
+                if (!Expect(TokenKind.CloseParen, "Ожидалась ')'"))
+                {
+                    return null;
+                }
+                return expr;
             }
             else
             {
-                ParsePrimary();
+                return ParseUnaryAst();
             }
-
         }
 
-        // Основные элементы выражений (числа, строки, идентификаторы)
-        private void ParsePrimary()
+        // Парсит унарное выражение (например, ++i) и возвращает узел AST
+        private ExprAst ParseUnaryAst()
         {
-            if (Match(TokenKind.NumberInt, TokenKind.NumberFloat, TokenKind.StringText, TokenKind.Identifier))
+            if (Match(TokenKind.PlusPlus))
             {
-                Advance(); // число, строка, переменная
+                var opToken = Peek();
+                Advance(); // Съедаем '++'
+                var operand = ParsePrimaryAst();
+                if (operand == null)
+                {
+                    return null;
+                }
+                return new UnaryExprAst(opToken.Line, opToken.Column, "++", operand);
+            }
+            return ParsePrimaryAst();
+        }
+
+        // Парсит первичное выражение (числа, строки, идентификаторы) и возвращает узел AST
+        private ExprAst ParsePrimaryAst()
+        {
+            var token = Peek();
+            if (Match(TokenKind.NumberInt))
+            {
+                Advance();
+                if (int.TryParse(token.Lexeme, out int value))
+                {
+                    return new IntExprAst(token.Line, token.Column, value);
+                }
+                Error("Некорректное целое число", token);
+                return null;
+            }
+            else if (Match(TokenKind.NumberFloat))
+            {
+                Advance();
+                if (double.TryParse(token.Lexeme, out double value))
+                {
+                    return new FloatExprAst(token.Line, token.Column, value);
+                }
+                Error("Некорректное вещественное число", token);
+                return null;
+            }
+            else if (Match(TokenKind.StringText))
+            {
+                Advance();
+                return new StringExprAst(token.Line, token.Column, token.Lexeme);
+            }
+            else if (Match(TokenKind.Identifier))
+            {
+                Advance();
+                return new IdentifierExprAst(token.Line, token.Column, token.Lexeme);
             }
             else
             {
-                Error("Синтаксическая ошибка - ожидалось значение или выражение");
+                Error("Ожидалось значение или выражение", token);
                 Advance();
+                return null;
             }
         }
-
     }
 }

@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AST\ASTNodes.cs" />
     <Compile Include="Diagnostics\Diagnostics.cs" />
     <Compile Include="Editor\Editor.cs" />
     <Compile Include="Lexer\SimpleLexer.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Parser\ParseAssignment.cs" />
     <Compile Include="Parser\ParseBlock.cs" />
     <Compile Include="Parser\ParseExpression.cs" />
+    <Compile Include="Parser\ParseFor.cs" />
     <Compile Include="Parser\ParseIf.cs" />
     <Compile Include="Parser\ParsePrint.cs" />
     <Compile Include="Parser\Parser.cs" />
@@ -135,6 +137,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

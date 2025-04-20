@@ -64,17 +64,24 @@ namespace Demo
             SimpleLexer lexer = new SimpleLexer(code);
             List<Token> tokens = lexer.Tokenize();
             Parser parser = new Parser(tokens);
-            parser.Parse();
+            var ast = parser.Parse();
 
-            rtbxAnalysis.Clear();
+            //rtbxAnalysis.Clear();
             //for (int i = 0; i < tokens.Count; i++)
             //{
             //    rtbxAnalysis.AppendText(tokens[i].Lexeme + "\r\n");
             //}
 
-            for (int i = 0; i < parser.lexems.Count; i++)
+            //for (int i = 0; i < parser.lexems.Count; i++)
+            //{
+            //    rtbxAnalysis.AppendText(parser.lexems[i] + "\r\n");
+            //}
+
+            // Вывод AST в RichTextBox
+            rtbxAnalysis.Clear();
+            foreach (var stmt in ast)
             {
-                rtbxAnalysis.AppendText(parser.lexems[i] + "\r\n");
+                rtbxAnalysis.AppendText(stmt.ToString(0) + "\n");
             }
 
             rtbxOutput.Clear();
