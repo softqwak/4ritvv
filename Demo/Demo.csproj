@@ -75,11 +75,17 @@
     <Compile Include="Parser\ParseArgument.cs" />
     <Compile Include="Parser\ParseAssignment.cs" />
     <Compile Include="Parser\ParseBlock.cs" />
+    <Compile Include="Parser\ParseClassDeclaration.cs" />
+    <Compile Include="Parser\ParseDelExpression.cs" />
     <Compile Include="Parser\ParseExpression.cs" />
     <Compile Include="Parser\ParseFor.cs" />
+    <Compile Include="Parser\ParseFunctionDeclaration.cs" />
     <Compile Include="Parser\ParseIf.cs" />
+    <Compile Include="Parser\ParseMemberAccess.cs" />
+    <Compile Include="Parser\ParseParameters.cs" />
     <Compile Include="Parser\ParsePrint.cs" />
     <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\ParseReturn.cs" />
     <Compile Include="Parser\ParseStatements.cs" />
     <Compile Include="Parser\ParseUtils.cs" />
     <Compile Include="Parser\ParseVariableDeclaration.cs" />

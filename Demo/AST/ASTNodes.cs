@@ -175,13 +175,40 @@ namespace Demo
     }
 
     // Объявление переменной
-    public class VarDeclStmtAst : StmtAst
+    public class VarDeclExprAst : StmtAst
     {
         public string Name { get; }
         public string Type { get; }
         public ExprAst Initializer { get; } // Может быть null
 
-        public VarDeclStmtAst(int line, int column, string name, string type, ExprAst initializer)
+        public VarDeclExprAst(int line, int column, string name, string type, ExprAst initializer)
+            : base(line, column)
+        {
+            Name = name;
+            Type = type;
+            Initializer = initializer;
+        }
+
+        public override string ToString(int indent)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(new string(' ', indent) + $"VarDeclExpr({Name}: {Type}) [Line: {Line}, Col: {Column}]");
+            if (Initializer != null)
+            {
+                sb.AppendLine(new string(' ', indent + 2) + "Initializer:");
+                sb.AppendLine(Initializer.ToString(indent + 4));
+            }
+            return sb.ToString();
+        }
+    }
+
+    public class VarDeclStmtAst : StmtAst
+    {
+        public string Name { get; }
+        public string Type { get; }
+        public StmtAst Initializer { get; } // Не может быть null
+
+        public VarDeclStmtAst(int line, int column, string name, string type, StmtAst initializer)
             : base(line, column)
         {
             Name = name;
@@ -202,13 +229,37 @@ namespace Demo
         }
     }
 
+
     // Присваивание
-    public class AssignStmtAst : StmtAst
+    public class AssignExprAst : StmtAst
     {
         public string Name { get; }
         public ExprAst Value { get; }
 
-        public AssignStmtAst(int line, int column, string name, ExprAst value)
+        public AssignExprAst(int line, int column, string name, ExprAst value)
+            : base(line, column)
+        {
+            Name = name;
+            Value = value;
+        }
+
+        public override string ToString(int indent)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(new string(' ', indent) + $"AssignExpr({Name}) [Line: {Line}, Col: {Column}]");
+            sb.AppendLine(new string(' ', indent + 2) + "Value:");
+            sb.AppendLine(Value.ToString(indent + 4));
+            return sb.ToString();
+        }
+    }
+
+    // Присваивание
+    public class AssignStmtAst : StmtAst
+    {
+        public string Name { get; }
+        public StmtAst Value { get; }
+
+        public AssignStmtAst(int line, int column, string name, StmtAst value)
             : base(line, column)
         {
             Name = name;
@@ -399,9 +450,9 @@ namespace Demo
     public class ConstructorDeclStmt : StmtAst
     {
         public List<ParameterAst> Parameters { get; }
-        public BlockStmtAst Body { get; }
+        public StmtAst Body { get; }
 
-        public ConstructorDeclStmt(int line, int column, List<ParameterAst> parameters, BlockStmtAst body)
+        public ConstructorDeclStmt(int line, int column, List<ParameterAst> parameters, StmtAst body)
             : base(line, column)
         {
             Parameters = parameters;
@@ -419,7 +470,7 @@ namespace Demo
                     result += $"\n{param.ToString(indent + 4)}";
                 }
             }
-            result += $"\n{new string(' ', indent + 2)}Body: {Body.ToString(indent + 4)}";
+            result += $"\n{new string(' ', indent + 2)}Body:\n{Body.ToString(indent + 4)}";
             return result;
         }
     }
@@ -430,15 +481,13 @@ namespace Demo
         public string Name { get; }
         public string ReturnType { get; } // null, если void
         public List<ParameterAst> Parameters { get; }
-        public BlockStmtAst Body { get; }
 
-        public VirtualMethodDeclStmt(int line, int column, string name, string returnType, List<ParameterAst> parameters, BlockStmtAst body)
+        public VirtualMethodDeclStmt(int line, int column, string name, string returnType, List<ParameterAst> parameters)
             : base(line, column)
         {
             Name = name;
             ReturnType = returnType;
             Parameters = parameters;
-            Body = body;
         }
 
         public override string ToString(int indent)
@@ -454,7 +503,6 @@ namespace Demo
                     result += $"\n{param.ToString(indent + 4)}";
                 }
             }
-            result += $"\n{new string(' ', indent + 2)}Body: {Body.ToString(indent + 4)}";
             return result;
         }
     }
@@ -465,9 +513,9 @@ namespace Demo
         public string Name { get; }
         public string ReturnType { get; } // null, если void
         public List<ParameterAst> Parameters { get; }
-        public BlockStmtAst Body { get; }
+        public StmtAst Body { get; }
 
-        public ImplMethodDeclStmt(int line, int column, string name, string returnType, List<ParameterAst> parameters, BlockStmtAst body)
+        public ImplMethodDeclStmt(int line, int column, string name, string returnType, List<ParameterAst> parameters, StmtAst body)
             : base(line, column)
         {
             Name = name;
@@ -489,7 +537,7 @@ namespace Demo
                     result += $"\n{param.ToString(indent + 4)}";
                 }
             }
-            result += $"\n{new string(' ', indent + 2)}Body: {Body.ToString(indent + 4)}";
+            result += $"\n{new string(' ', indent + 2)}Body:\n{Body.ToString(indent + 4)}";
             return result;
         }
     }
@@ -500,9 +548,9 @@ namespace Demo
         public string Name { get; }
         public string ReturnType { get; } // null, если void
         public List<ParameterAst> Parameters { get; }
-        public BlockStmtAst Body { get; }
+        public StmtAst Body { get; }
 
-        public FunctionDeclStmt(int line, int column, string name, string returnType, List<ParameterAst> parameters, BlockStmtAst body)
+        public FunctionDeclStmt(int line, int column, string name, string returnType, List<ParameterAst> parameters, StmtAst body)
             : base(line, column)
         {
             Name = name;
@@ -524,7 +572,7 @@ namespace Demo
                     result += $"\n{param.ToString(indent + 4)}";
                 }
             }
-            result += $"\n{new string(' ', indent + 2)}Body: {Body.ToString(indent + 4)}";
+            result += $"\n{new string(' ', indent + 2)}Body:\n{Body.ToString(indent + 4)}";
             return result;
         }
     }
@@ -545,19 +593,19 @@ namespace Demo
             var result = $"{new string(' ', indent)}ReturnStmt [Line: {Line}, Col: {Column}]";
             if (Value != null)
             {
-                result += $"\n{new string(' ', indent + 2)}Value: {Value.ToString(indent + 4)}";
+                result += $"\n{new string(' ', indent + 2)}Value:\n{Value.ToString(indent + 4)}";
             }
             return result;
         }
     }
 
     // Выражение создания экземпляра (new)
-    public class NewExpr : ExprAst
+    public class NewStmt : StmtAst
     {
         public string ClassName { get; }
         public List<ExprAst> Arguments { get; }
 
-        public NewExpr(int line, int column, string className, List<ExprAst> arguments)
+        public NewStmt(int line, int column, string className, List<ExprAst> arguments)
             : base(line, column)
         {
             ClassName = className;
@@ -597,7 +645,7 @@ namespace Demo
         public override string ToString(int indent)
         {
             var result = $"{new string(' ', indent)}CallStmt [Line: {Line}, Col: {Column}]\n" +
-                         $"{new string(' ', indent + 2)}Receiver: {Receiver.ToString(indent + 4)}\n" +
+                         $"{new string(' ', indent + 2)}Receiver:\n{Receiver.ToString(indent + 4)}\n" +
                          $"{new string(' ', indent + 2)}Method: {Method}";
             if (Arguments.Any())
             {
@@ -608,27 +656,6 @@ namespace Demo
                 }
             }
             return result;
-        }
-    }
-
-    // Доступ к полю или методу
-    public class MemberAccessExpr : ExprAst
-    {
-        public ExprAst Receiver { get; }
-        public string Member { get; }
-
-        public MemberAccessExpr(int line, int column, ExprAst receiver, string member)
-            : base(line, column)
-        {
-            Receiver = receiver;
-            Member = member;
-        }
-
-        public override string ToString(int indent)
-        {
-            return $"{new string(' ', indent)}MemberAccessExpr({Receiver}.{Member}) [Line: {Line}, Col: {Column}]\n" +
-                   $"{new string(' ', indent + 2)}Receiver: {Receiver.ToString(indent + 4)}\n" +
-                   $"{new string(' ', indent + 2)}Member: {Member}";
         }
     }
 
@@ -648,4 +675,51 @@ namespace Demo
             return $"{new string(' ', indent)}DeleteStmt({Variable}) [Line: {Line}, Col: {Column}]";
         }
     }
+
+    // Выражение доступа к члену (например, obj.field)
+    public class MemberAccessExprAst : ExprAst
+    {
+        public ExprAst Receiver { get; } // Объект (например, obj)
+        public string Member { get; } // Имя поля (например, field)
+
+        public MemberAccessExprAst(int line, int column, ExprAst receiver, string member)
+            : base(line, column)
+        {
+            Receiver = receiver;
+            Member = member;
+        }
+
+        public override string ToString(int indent)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(new string(' ', indent) + $"MemberAccessExpr({Member}) [Line: {Line}, Col: {Column}]");
+            sb.AppendLine(new string(' ', indent + 2) + "Receiver:");
+            sb.AppendLine(Receiver.ToString(indent + 4));
+            return sb.ToString();
+        }
+    }
+
+    // Выражение доступа (например, obj.method())
+    public class MemberAccessStmtAst : ExprAst
+    {
+        public ExprAst Receiver { get; } // Объект (например, obj)
+        public string Member { get; } // Имя поля (например, field)
+
+        public MemberAccessStmtAst(int line, int column, ExprAst receiver, string member)
+            : base(line, column)
+        {
+            Receiver = receiver;
+            Member = member;
+        }
+
+        public override string ToString(int indent)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(new string(' ', indent) + $"MemberAccessStmt({Member}) [Line: {Line}, Col: {Column}]");
+            sb.AppendLine(new string(' ', indent + 2) + "Receiver:");
+            sb.AppendLine(Receiver.ToString(indent + 4));
+            return sb.ToString();
+        }
+    }
+
 }

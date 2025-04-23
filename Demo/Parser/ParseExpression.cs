@@ -1,4 +1,6 @@
-﻿namespace Demo
+﻿using System.Collections.Generic;
+
+namespace Demo
 {
     public partial class Parser
     {
@@ -93,7 +95,7 @@
             return ParsePrimaryAst();
         }
 
-        // Парсит первичное выражение (числа, строки, идентификаторы) и возвращает узел AST
+        // Парсит первичное выражение (числа, строки, идентификаторы, доступ к полям) и возвращает узел AST
         private ExprAst ParsePrimaryAst()
         {
             var token = Peek();
@@ -124,6 +126,13 @@
             }
             else if (Match(TokenKind.Identifier))
             {
+                // Проверяем, является ли это доступом к полю (например, obj.field)
+                var nextToken = Peek(1);
+                if (nextToken.Kind == TokenKind.Period)
+                {
+                    return ParseMemberAccessExpr();
+                }
+                // Обычный идентификатор
                 Advance();
                 return new IdentifierExprAst(token.Line, token.Column, token.Lexeme);
             }
@@ -133,6 +142,46 @@
                 Advance();
                 return null;
             }
+        }
+
+
+        // Парсит выражение new
+        // Формат: new Square((i + 1) * 10)
+        private StmtAst ParseNewExpression()
+        {
+            var newToken = Peek(); // Съедено 'new'
+            Advance();
+            // Ожидаем имя класса
+            if (!Expect(TokenKind.Identifier, "Ожидалось имя класса после new"))
+            {
+                SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                return null;
+            }
+            var className = Peek(-1).Lexeme;
+
+            // Парсим аргументы
+            var arguments = new List<ExprAst>();
+            if (!Expect(TokenKind.OpenParen, "Ожидалась '(' для начала списка аргументов"))
+            {
+                SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                return null;
+            }
+
+            if (!Match(TokenKind.CloseParen))
+            {
+                arguments = ParseArgumentList();
+                if (arguments == null)
+                {
+                    SynchronizeTo(TokenKind.CloseParen, TokenKind.Semicolon, TokenKind.EndOfFile);
+                    return null;
+                }
+            }
+            else
+            {
+                Advance();
+            }
+
+            return new NewStmt(newToken.Line, newToken.Column, className, arguments);
         }
     }
 }

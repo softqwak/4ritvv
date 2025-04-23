@@ -1,4 +1,6 @@
-﻿namespace Demo
+﻿using System.Windows.Forms;
+
+namespace Demo
 {
     public partial class Parser
     {
@@ -34,7 +36,7 @@
 
             // Ожидаем тип (int, string, float)
             var typeToken = Peek();
-            if (!Match(TokenKind.Int, TokenKind.String, TokenKind.Float))
+            if (!Match(TokenKind.Int, TokenKind.String, TokenKind.Float, TokenKind.Identifier))
             {
                 Error("Ожидался тип (int, string или float)", typeToken);
                 SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
@@ -44,15 +46,28 @@
             Advance(); // Съедаем тип
 
             ExprAst initializer = null;
+            StmtAst stmtAstInitializer = null;
             // Проверяем наличие инициализации
             if (Match(TokenKind.Assignment))
             {
                 Advance(); // Съедаем '='
-                initializer = ParseExpressionAst();
-                if (initializer == null)
+                if (!Match(TokenKind.New))
                 {
-                    SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
-                    return null;
+                    initializer = ParseExpressionAst();
+                    if (initializer == null)
+                    {
+                        SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                        return null;
+                    }
+                }
+                else
+                {
+                    stmtAstInitializer = ParseNewExpression();
+                    if (stmtAstInitializer == null)
+                    {
+                        SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                        return null;
+                    }
                 }
             }
             else
@@ -60,7 +75,6 @@
                 // Выдаём предупреждение, если нет инициализации
                 Warning("Переменная объявлена без инициализации", idToken);
             }
-
             // Ожидаем точку с запятой
             if (!Expect(TokenKind.Semicolon, "Ожидался ';' после объявления переменной"))
             {
@@ -69,7 +83,9 @@
             }
 
             // Создаём узел AST
-            return new VarDeclStmtAst(idToken.Line, idToken.Column, idToken.Lexeme, type, initializer);
+            if (initializer != null)
+                return new VarDeclExprAst(idToken.Line, idToken.Column, idToken.Lexeme, type, initializer);
+            return new VarDeclStmtAst(idToken.Line, idToken.Column, idToken.Lexeme, type, stmtAstInitializer);
         }
     }
 }

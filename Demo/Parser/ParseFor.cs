@@ -12,9 +12,6 @@ namespace Demo
             var forToken = Peek();
             Advance(); // Съедаем 'for'
 
-            // Отладочный вывод текущего токена
-            Console.WriteLine($"After 'for': Token = {Peek().Kind}, Lexeme = {Peek().Lexeme}, Line = {Peek().Line}, Col = {Peek().Column}");
-
             // Парсим инициализацию (например, let i: int = 0)
             StmtAst initializer = null;
             if (Match(TokenKind.Let) || Match(TokenKind.Identifier))
@@ -26,9 +23,6 @@ namespace Demo
                     return null;
                 }
             }
-
-            // Отладочный вывод до условия
-            MessageBox.Show($"before if: Token = {Peek().Kind}, Lexeme = {Peek().Lexeme}, Line = {Peek().Line}, Col = {Peek().Column}");
 
             // Парсим условие (например, i < 10)
             ExprAst condition = null;
@@ -42,18 +36,12 @@ namespace Demo
                 }
             }
 
-            // Отладочный вывод перед проверкой ';'
-            MessageBox.Show($"Before condition semicolon: Token = {Peek().Kind}, Lexeme = {Peek().Lexeme}, Line = {Peek().Line}, Col = {Peek().Column}");
-
             // Проверяем точку с запятой после условия
             if (!Expect(TokenKind.Semicolon, "Ожидался ';' после условия"))
             {
                 SynchronizeTo(TokenKind.Semicolon, TokenKind.OpenBrace, TokenKind.EndOfFile);
                 return null;
             }
-
-            // Отладочный вывод после условия
-            Console.WriteLine($"After condition semicolon: Token = {Peek().Kind}, Lexeme = {Peek().Lexeme}, Line = {Peek().Line}, Col = {Peek().Column}");
 
             // Парсим итерацию (например, ++i)
             ExprAst increment = null;
@@ -66,9 +54,6 @@ namespace Demo
                     return null;
                 }
             }
-
-            // Отладочный вывод перед телом
-            Console.WriteLine($"Before body: Token = {Peek().Kind}, Lexeme = {Peek().Lexeme}, Line = {Peek().Line}, Col = {Peek().Column}");
 
             // Парсим тело цикла
             var body = ParseBlock();

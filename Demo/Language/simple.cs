@@ -11,7 +11,7 @@ namespace Demo
         public static readonly string[] keywords = {
             "fn", "class", "int", "string", "float", "for",
             "let", "virt", "impl", "extends", "if", "else",
-            "return", "print"
+            "return", "print", "del"
         };
     }
 }

@@ -65,6 +65,7 @@ namespace Demo
         CloseParen,         // )
         Semicolon,          // ;
         Comma,              // ,
+        Period,             // .
         // Блок кода
         OpenBrace,      // {
         CloseBrace,     // }
@@ -129,6 +130,7 @@ namespace Demo
             { TokenKind.Minus, TokenCategory.Operator },
             { TokenKind.Asterisk, TokenCategory.Operator },
             { TokenKind.Slash, TokenCategory.Operator },
+            { TokenKind.Period, TokenCategory.Operator },
             { TokenKind.PlusPlus, TokenCategory.Operator },
 
             // Операторы сравнения

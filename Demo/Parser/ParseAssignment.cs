@@ -1,10 +1,13 @@
-﻿namespace Demo
+﻿using System.Windows.Forms;
+
+namespace Demo
 {
     public partial class Parser
     {
         // Парсит присваивание и возвращает узел AST
         private StmtAst ParseAssignment()
         {
+
             var idToken = Peek();
             Advance(); // Съедаем идентификатор
 
@@ -13,12 +16,26 @@
                 SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
                 return null;
             }
-
-            var value = ParseExpressionAst();
-            if (value == null)
+            ExprAst value = null;
+            StmtAst stmt = null;
+            if (!Match(TokenKind.New))
             {
-                SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
-                return null;
+                value = ParseExpressionAst();
+                if (value == null)
+                {
+                    SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                    return null;
+                }
+            }
+            else
+            {
+                stmt = ParseNewExpression();
+                if (stmt == null)
+                {
+                    SynchronizeTo(TokenKind.Semicolon, TokenKind.EndOfFile);
+                    return null;
+                }
+                Advance();
             }
 
             if (!Expect(TokenKind.Semicolon, "Ожидался ';' после выражения"))
@@ -27,7 +44,11 @@
                 return null;
             }
 
-            return new AssignStmtAst(idToken.Line, idToken.Column, idToken.Lexeme, value);
+            if (value != null)
+            {
+                return new AssignExprAst(idToken.Line, idToken.Column, idToken.Lexeme, value);
+            }
+            return new AssignStmtAst(idToken.Line, idToken.Column, idToken.Lexeme, stmt);
         }
     }
 }

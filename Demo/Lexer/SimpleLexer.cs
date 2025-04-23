@@ -233,6 +233,7 @@ namespace Demo
                 case ')': return new Token(TokenKind.CloseParen, ")", tokenPos, _line, _column);
                 case ';': return new Token(TokenKind.Semicolon, ";", tokenPos, _line, _column);
                 case ',': return new Token(TokenKind.Comma, ",", tokenPos, _line, _column);
+                case '.': return new Token(TokenKind.Period, ".", tokenPos, _line, _column);
                 case '!': return new Token(TokenKind.Not, "!", tokenPos, _line, _column);
             }
 
