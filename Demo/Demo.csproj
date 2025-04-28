@@ -66,12 +66,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analyzer\ClassInfo.cs" />
+    <Compile Include="Analyzer\ConstructorInfo.cs" />
+    <Compile Include="Analyzer\FunctionInfo.cs" />
+    <Compile Include="Analyzer\MethodInfo.cs" />
+    <Compile Include="Analyzer\SemanticAnalyzer.cs" />
+    <Compile Include="Analyzer\VariableInfo.cs" />
     <Compile Include="AST\ASTNodes.cs" />
     <Compile Include="Diagnostics\Diagnostics.cs" />
     <Compile Include="Editor\Editor.cs" />
     <Compile Include="Lexer\SimpleLexer.cs" />
     <Compile Include="Lexer\Token.cs" />
     <Compile Include="Language\simple.cs" />
+    <Compile Include="ListUtils.cs" />
     <Compile Include="Parser\ParseArgument.cs" />
     <Compile Include="Parser\ParseAssignment.cs" />
     <Compile Include="Parser\ParseBlock.cs" />

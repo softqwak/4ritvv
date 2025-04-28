@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Windows.Forms;
 
 namespace Demo
 {
@@ -112,11 +114,22 @@ namespace Demo
             else if (Match(TokenKind.NumberFloat))
             {
                 Advance();
-                if (double.TryParse(token.Lexeme, out double value))
+                // Проверяем содержимое token.Lexeme для отладки
+                if (string.IsNullOrWhiteSpace(token.Lexeme))
+                {
+                    Error("Пустой или некорректный токен для вещественного числа", token);
+                    return null;
+                }
+
+                // Используем InvariantCulture для корректного разбора точки как десятичного разделителя
+                if (double.TryParse(token.Lexeme, NumberStyles.Any, CultureInfo.InvariantCulture, out double value))
                 {
                     return new FloatExprAst(token.Line, token.Column, value);
                 }
-                Error("Некорректное вещественное число", token);
+
+                // Выводим значение token.Lexeme для диагностики
+                MessageBox.Show($"Не удалось распознать вещественное число: '{token.Lexeme}'");
+                Error($"Некорректное вещественное число: '{token.Lexeme}'", token);
                 return null;
             }
             else if (Match(TokenKind.StringText))

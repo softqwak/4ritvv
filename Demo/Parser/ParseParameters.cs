@@ -36,6 +36,7 @@ namespace Demo
                     }
                     if (!Match(TokenKind.Int, TokenKind.String, TokenKind.Float))
                     {
+                        MessageBox.Show($"{Peek().Lexeme}");
                         Error("Требуется тип параметра");
                         SyncToBlockEnd();
                         return null;

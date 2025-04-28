@@ -65,17 +65,11 @@ namespace Demo
             List<Token> tokens = lexer.Tokenize();
             Parser parser = new Parser(tokens);
             var ast = parser.Parse();
+            // Создаём семантический анализатор
+            var analyzer = new SemanticAnalyzer();
+            // Анализируем AST
+            analyzer.Analyze(ast);
 
-            //rtbxAnalysis.Clear();
-            //for (int i = 0; i < tokens.Count; i++)
-            //{
-            //    rtbxAnalysis.AppendText(tokens[i].Lexeme + "\r\n");
-            //}
-
-            //for (int i = 0; i < parser.lexems.Count; i++)
-            //{
-            //    rtbxAnalysis.AppendText(parser.lexems[i] + "\r\n");
-            //}
 
             // Вывод AST в RichTextBox
             rtbxAnalysis.Clear();
@@ -85,6 +79,7 @@ namespace Demo
             }
 
             rtbxOutput.Clear();
+            ListUtils.RemoveDuplicates(Diagnostics._messagesError);
             for (int i = 0; i < Diagnostics._messagesError.Count; i++)
             {
                 rtbxOutput.SelectionColor = Color.DarkRed;
@@ -102,7 +97,7 @@ namespace Demo
                 activeEditor.IndicatorFillRange(pos, posEnd - pos); // 1 символ
             }
 
-
+            ListUtils.RemoveDuplicates(Diagnostics._messagesWarning);
             for (int i = 0; i < Diagnostics._messagesWarning.Count; i++)
             {
                 rtbxOutput.SelectionColor = Color.DarkGoldenrod;

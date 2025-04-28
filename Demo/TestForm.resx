@@ -118,108 +118,59 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="scintilla1.Text" xml:space="preserve">
-    <value>class Person {
-    virt Alive(add: int):int;
-    Age: int = 0;
-    Name: string = "noname";    
+    <value>class Point {
+    X: float = 0.0;
+    Y: float = 0.0;
+    new (x: float, y: float) {
+        X = x;
+        Y = y;
+    }
+    virt move(dx: float): int;
 }
 
-class Student extends Person {
-    new(name: string, age: int) {
-        print("new Student! name - ", name, " age - ", age);
-        Age = age;
-        Name = name;
+class ColoredPoint extends Point {
+    color: string;
+    new(x: float, y: float, c: string) {
+        X = x;
+        Y = y;
+        color = c;
     }
-
-    impl alive(add: int): int {        
-        Age = a + b + c + add;
-        return Age;
+    impl move(dx: string): int {
+        X = X + dx;
+        Y = Y + dx;
+        return 0;
     }
 }
 
-fn Main(): int {
-    let iam: Student = new Student("Valentin", 20);
-    for let i: int = 20 ; i &lt; 30; ++i {
-        test: Student = new Student("test", i);
-    }
+fn main(): int {
+    let p: ColoredPoint = new ColoredPoint(1.0, 2.0, "red");
+    p.move(3.0);
+    print(p.X);
+    del p;
     return 0;
 }</value>
   </data>
   <data name="scintilla2.Text" xml:space="preserve">
-    <value>fn printLn(s1: string, s2: string) {
-  print(s1);
-  print(s2);
-  printLn("");
-}
-
-fn printLn(s: string, i: int) {
-  print(s);
-  print(i);
-  printLn("");
-}
-
-class Shape {
-  virt draw() {
-  }
-}
-
-class Square extends Shape {
-  side: int = 0;
-
-  new(s: int) {
-    side = s;
-  }
-
-  impl draw() {
-    printLn("Square.draw side: ", side);
-  }
-}
-
-class Circle extends Shape {
-  radius: int = 0;
-
-  new(r: int) {
-    radius = r;
-  }
-
-  impl draw() {
-    printLn("Circle.draw radius: ", radius);
-  }
-}
-
-fn main(): float {
-  for let i: int = 0; i &lt; 10; ++i {
-    let p: Shape* = 0;
-    
-    if i % 2 == 0 {
-      p = new Square((i + 1) * 10);
-    } else {
-      p = new Circle((i + 1) * 5);
+    <value>class Point {
+    X: float = 0.0;
+    Y: float = 0.0;
+    new (x: float, y: float) {
+        X = x;
+        Y = y;
     }
-
-    p.draw();
-    del p;
-  }
-
-  return 0.0;
+    virt move(dx: float): int;
 }
 
-a: int = 0;
-        b: int = 10;
-        a = b - 3;
-        let c: int = a * b;
-
-        for let i: int = 0 ; i &lt; 10; ++i 
-        {
-            if a &gt; b {
-                if (a + b &gt; c) { 
-                    print("ok"); 
-                }
-            }    
-            if a == b || c &lt; d &amp;&amp; e &gt; f { 
-                print("complex"); 
-            }
-        }</value>
+fn main(): int {
+    let p: Point = new Point(1.0, 2.0);
+    if (p.X &lt; p.Y) {
+        print("X is less than Y");
+    } else {
+        print("X is not less than Y");
+    }
+    del p;
+    return 0;
+}</value>
   </data>
   <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>

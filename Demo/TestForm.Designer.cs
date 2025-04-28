@@ -86,7 +86,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabConsol);
             this.splitContainer1.Size = new System.Drawing.Size(949, 622);
-            this.splitContainer1.SplitterDistance = 240;
+            this.splitContainer1.SplitterDistance = 355;
             this.splitContainer1.TabIndex = 4;
             // 
             // tabExs
@@ -98,7 +98,7 @@
             this.tabExs.Location = new System.Drawing.Point(0, 0);
             this.tabExs.Name = "tabExs";
             this.tabExs.SelectedIndex = 0;
-            this.tabExs.Size = new System.Drawing.Size(949, 240);
+            this.tabExs.Size = new System.Drawing.Size(949, 355);
             this.tabExs.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabExs.TabIndex = 5;
             // 
@@ -120,7 +120,7 @@
             this.tabEx2.Location = new System.Drawing.Point(4, 22);
             this.tabEx2.Name = "tabEx2";
             this.tabEx2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEx2.Size = new System.Drawing.Size(941, 214);
+            this.tabEx2.Size = new System.Drawing.Size(941, 329);
             this.tabEx2.TabIndex = 1;
             this.tabEx2.Text = "Пример №2";
             // 
@@ -131,7 +131,7 @@
             this.scintilla2.Location = new System.Drawing.Point(3, 3);
             this.scintilla2.Name = "scintilla2";
             this.scintilla2.ScrollWidth = 5001;
-            this.scintilla2.Size = new System.Drawing.Size(935, 208);
+            this.scintilla2.Size = new System.Drawing.Size(935, 323);
             this.scintilla2.TabIndex = 1;
             this.scintilla2.Text = resources.GetString("scintilla2.Text");
             this.scintilla2.WrapMode = ScintillaNET.WrapMode.Word;
@@ -146,7 +146,7 @@
             this.tabConsol.Location = new System.Drawing.Point(0, 3);
             this.tabConsol.Name = "tabConsol";
             this.tabConsol.SelectedIndex = 0;
-            this.tabConsol.Size = new System.Drawing.Size(949, 372);
+            this.tabConsol.Size = new System.Drawing.Size(949, 257);
             this.tabConsol.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabConsol.TabIndex = 0;
             // 
@@ -157,7 +157,7 @@
             this.tabAnalysis.Location = new System.Drawing.Point(4, 22);
             this.tabAnalysis.Name = "tabAnalysis";
             this.tabAnalysis.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAnalysis.Size = new System.Drawing.Size(941, 346);
+            this.tabAnalysis.Size = new System.Drawing.Size(941, 231);
             this.tabAnalysis.TabIndex = 0;
             this.tabAnalysis.Text = "Анализ";
             // 
@@ -170,7 +170,7 @@
             this.rtbxAnalysis.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbxAnalysis.Location = new System.Drawing.Point(6, 4);
             this.rtbxAnalysis.Name = "rtbxAnalysis";
-            this.rtbxAnalysis.Size = new System.Drawing.Size(932, 339);
+            this.rtbxAnalysis.Size = new System.Drawing.Size(932, 224);
             this.rtbxAnalysis.TabIndex = 0;
             this.rtbxAnalysis.Text = "";
             // 
@@ -181,7 +181,7 @@
             this.tabOutput.Location = new System.Drawing.Point(4, 22);
             this.tabOutput.Name = "tabOutput";
             this.tabOutput.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOutput.Size = new System.Drawing.Size(852, 209);
+            this.tabOutput.Size = new System.Drawing.Size(941, 346);
             this.tabOutput.TabIndex = 3;
             this.tabOutput.Text = "Вывод";
             // 
@@ -194,7 +194,7 @@
             this.rtbxOutput.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbxOutput.Location = new System.Drawing.Point(6, 4);
             this.rtbxOutput.Name = "rtbxOutput";
-            this.rtbxOutput.Size = new System.Drawing.Size(843, 202);
+            this.rtbxOutput.Size = new System.Drawing.Size(929, 336);
             this.rtbxOutput.TabIndex = 0;
             this.rtbxOutput.Text = "";
             this.rtbxOutput.TextChanged += new System.EventHandler(this.rtbxOutput_TextChanged);

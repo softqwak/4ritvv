@@ -80,18 +80,7 @@ namespace Demo
 
             if (char.IsDigit(ch))
             {
-                int start = _position;
-                int startLine = _line;
-                int startColumn = _column;
-
-                while (_position < _source.Length && char.IsDigit(_source[_position]))
-                {
-                    _position++;
-                    _column++;
-                }
-
-                string number = _source.Substring(start, _position - start);
-                return new Token(TokenKind.NumberInt, number, start, startLine, startColumn);
+                return ProcessNumber();
             }
 
             // Обработка строк
@@ -267,5 +256,83 @@ namespace Demo
                 default: return TokenKind.Identifier;
             }
         }
+
+        // Обрабатывает числовые литералы (целые и вещественные числа)
+        private Token ProcessNumber()
+        {
+            // Сохраняем начальную позицию, строку и столбец для токена
+            int start = _position;
+            int startLine = _line;
+            int startColumn = _column;
+
+            // Проверяем, что текущий символ — цифра
+            if (!char.IsDigit(_source[_position]))
+            {
+                // Если текущий символ не цифра, возвращаем недопустимый токен
+                string invalid = _source[_position].ToString();
+                _position++;
+                _column++;
+                return new Token(TokenKind.Invalid, invalid, start, startLine, startColumn);
+            }
+
+            // Собираем целую часть числа
+            while (_position < _source.Length && char.IsDigit(_source[_position]))
+            {
+                _position++;
+                _column++;
+            }
+
+            // Проверяем наличие десятичной точки
+            bool isFloat = false;
+            if (_position < _source.Length && _source[_position] == '.')
+            {
+                isFloat = true;
+                _position++; // Съедаем точку
+                _column++;
+
+                // Проверяем, есть ли цифры после точки
+                if (_position >= _source.Length || !char.IsDigit(_source[_position]))
+                {
+                    // Если после точки нет цифр (например, "123."), возвращаем недопустимый токен
+                    string invalid = _source.Substring(start, _position - start);
+                    return new Token(TokenKind.Invalid, invalid, start, startLine, startColumn);
+                }
+
+                // Собираем дробную часть
+                while (_position < _source.Length && char.IsDigit(_source[_position]))
+                {
+                    _position++;
+                    _column++;
+                }
+            }
+
+            // Извлекаем строковое представление числа
+            string number = _source.Substring(start, _position - start);
+
+            // Определяем тип токена
+            if (isFloat)
+            {
+                // Проверяем, является ли строка корректным вещественным числом
+                if (double.TryParse(number, System.Globalization.NumberStyles.Any,
+                                   System.Globalization.CultureInfo.InvariantCulture, out _))
+                {
+                    return new Token(TokenKind.NumberFloat, number, start, startLine, startColumn);
+                }
+                // Если парсинг не удался, возвращаем недопустимый токен
+                return new Token(TokenKind.Invalid, number, start, startLine, startColumn);
+            }
+            else
+            {
+                // Проверяем, является ли строка корректным целым числом
+                if (int.TryParse(number, out _))
+                {
+                    return new Token(TokenKind.NumberInt, number, start, startLine, startColumn);
+                }
+                // Если парсинг не удался, возвращаем недопустимый токен
+                return new Token(TokenKind.Invalid, number, start, startLine, startColumn);
+            }
+        }
     }
+
+
 }
